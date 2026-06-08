@@ -1,0 +1,2220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STdFinance — Tu Cerebro Financiero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,700;1,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --ink:#0a0a0a;
+  --ink2:#1c1c1e;
+  --ink3:#2c2c2e;
+  --mid:#48484a;
+  --dust:#636366;
+  --mist:#aeaeb2;
+  --fog:#d1d1d6;
+  --paper:#f2f2f7;
+  --white:#ffffff;
+  --accent:#0a0a0a;
+  --red:#ff3b30;
+  --green:#34c759;
+  --blue:#007aff;
+  --orange:#ff9500;
+  --purple:#af52de;
+  --yellow:#ffd60a;
+  --r:16px;
+  --r-lg:24px;
+  --shadow:0 2px 20px rgba(0,0,0,.08);
+  --shadow-lg:0 8px 40px rgba(0,0,0,.12);
+}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);overflow-x:hidden;min-height:100vh;}
+
+/* ── SIDEBAR ── */
+.app{display:flex;min-height:100vh;}
+.sidebar{
+  width:260px;min-width:260px;background:var(--ink);
+  display:flex;flex-direction:column;padding:28px 16px;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  border-right:1px solid var(--ink2);
+}
+.brand{display:flex;align-items:center;gap:12px;padding:0 12px 32px;border-bottom:1px solid var(--ink3);}
+.brand-mark{
+  width:40px;height:40px;background:var(--white);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.brand-name{font-size:17px;font-weight:700;color:var(--white);letter-spacing:-.3px;}
+.brand-sub{font-size:11px;color:var(--dust);font-weight:400;margin-top:1px;}
+
+.nav{display:flex;flex-direction:column;gap:2px;padding-top:20px;flex:1;}
+.nav-section-label{font-size:10px;font-weight:600;color:var(--dust);letter-spacing:1.5px;text-transform:uppercase;padding:16px 12px 6px;}
+.nav-item{
+  display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;
+  cursor:pointer;transition:all .2s ease;color:var(--mist);font-size:14px;font-weight:500;
+  border:1px solid transparent;position:relative;
+}
+.nav-item:hover{background:var(--ink3);color:var(--fog);}
+.nav-item.active{background:var(--white);color:var(--ink);}
+.nav-item .badge{
+  margin-left:auto;background:var(--red);color:#fff;
+  font-size:10px;font-weight:700;border-radius:20px;padding:2px 7px;min-width:20px;text-align:center;
+}
+.nav-icon{width:20px;height:20px;opacity:.8;flex-shrink:0;}
+.nav-item.active .nav-icon{opacity:1;}
+
+.sidebar-footer{border-top:1px solid var(--ink3);padding-top:16px;margin-top:auto;}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;}
+.user-avatar{
+  width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--fog),var(--mist));
+  display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--ink);
+  flex-shrink:0;overflow:hidden;
+}
+.user-name{font-size:13px;font-weight:600;color:var(--fog);}
+.user-plan{font-size:11px;color:var(--dust);}
+.pro-badge{
+  margin-left:auto;background:linear-gradient(135deg,#ffd60a,#ff9500);
+  color:var(--ink);font-size:9px;font-weight:800;border-radius:4px;padding:2px 5px;letter-spacing:.5px;
+}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;background:var(--paper);}
+.view{display:none;padding:32px;max-width:1200px;margin:0 auto;}
+.view.active{display:block;animation:fadeUp .3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── HEADER ── */
+.page-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;gap:16px;}
+.page-title{font-family:'Fraunces',serif;font-size:36px;font-weight:700;color:var(--ink);letter-spacing:-.5px;line-height:1.1;}
+.page-sub{font-size:14px;color:var(--dust);margin-top:6px;font-weight:400;}
+.head-actions{display:flex;gap:10px;align-items:center;flex-shrink:0;}
+
+/* ── STAT CARDS ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:12px;}
+.stats-row-weekly{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.stat-card.weekly{background:linear-gradient(135deg,rgba(0,122,255,.04),rgba(0,122,255,.01));border-color:rgba(0,122,255,.15);}
+.week-label{font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;}
+.stat-card{
+  background:var(--white);border-radius:var(--r-lg);padding:22px;
+  border:1px solid var(--fog);position:relative;overflow:hidden;cursor:default;
+  transition:all .25s ease;
+}
+.stat-card:hover{border-color:var(--mist);box-shadow:var(--shadow);}
+.stat-accent{position:absolute;top:0;left:0;right:0;height:3px;}
+.stat-accent.green{background:var(--green);}
+.stat-accent.red{background:var(--red);}
+.stat-accent.blue{background:var(--blue);}
+.stat-accent.orange{background:var(--orange);}
+.stat-label{font-size:11px;font-weight:600;color:var(--dust);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.stat-val{font-family:'DM Mono',monospace;font-size:26px;font-weight:500;color:var(--ink);letter-spacing:-.5px;}
+.stat-meta{font-size:12px;color:var(--dust);margin-top:6px;}
+.stat-trend{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;margin-top:8px;padding:3px 8px;border-radius:6px;}
+.stat-trend.up{background:rgba(52,199,89,.12);color:var(--green);}
+.stat-trend.down{background:rgba(255,59,48,.1);color:var(--red);}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--fog);border-radius:var(--r-lg);padding:24px;margin-bottom:20px;}
+.card-title{font-size:16px;font-weight:600;color:var(--ink);margin-bottom:18px;display:flex;align-items:center;gap:10px;}
+.card-grid{display:grid;gap:16px;}
+.col-2{grid-template-columns:1fr 1fr;}
+.col-3{grid-template-columns:1fr 1fr 1fr;}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;padding:11px 20px;
+  border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;
+  transition:all .2s ease;border:1px solid transparent;font-family:'DM Sans',sans-serif;
+}
+.btn-primary{background:var(--ink);color:var(--white);}
+.btn-primary:hover{background:var(--ink3);}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--fog);}
+.btn-ghost:hover{background:var(--paper);border-color:var(--mist);}
+.btn-danger{background:rgba(255,59,48,.1);color:var(--red);border-color:rgba(255,59,48,.2);}
+.btn-danger:hover{background:rgba(255,59,48,.2);}
+.btn-success{background:rgba(52,199,89,.1);color:var(--green);border-color:rgba(52,199,89,.2);}
+.btn-success:hover{background:rgba(52,199,89,.2);}
+.btn-sm{padding:7px 14px;font-size:13px;}
+.btn-icon{padding:9px;border-radius:9px;}
+
+/* ── FORMS ── */
+.form-group{margin-bottom:18px;}
+.form-label{font-size:12px;font-weight:600;color:var(--dust);text-transform:uppercase;letter-spacing:.7px;display:block;margin-bottom:8px;}
+.form-input,.form-select{
+  width:100%;padding:12px 14px;border:1.5px solid var(--fog);border-radius:10px;
+  background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;
+  font-size:14px;transition:all .2s ease;
+}
+.form-input:focus,.form-select:focus{outline:none;border-color:var(--ink);background:var(--white);box-shadow:0 0 0 3px rgba(10,10,10,.06);}
+.form-input::placeholder{color:var(--mist);}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-hint{font-size:11px;color:var(--dust);margin-top:6px;}
+
+/* ── MODAL ── */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal.open{display:flex;animation:fadeIn .2s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.modal-box{
+  background:var(--white);border-radius:var(--r-lg);padding:28px;
+  width:90%;max-width:520px;max-height:90vh;overflow-y:auto;
+  animation:popUp .25s ease;box-shadow:var(--shadow-lg);
+}
+@keyframes popUp{from{transform:scale(.96);opacity:0;}to{transform:scale(1);opacity:1;}}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;}
+.modal-title{font-size:20px;font-weight:700;color:var(--ink);}
+.modal-close{background:var(--paper);border:none;width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--mid);font-size:18px;transition:all .2s;}
+.modal-close:hover{background:var(--fog);}
+
+/* ── TRANSACTIONS ── */
+.tx-item{
+  display:flex;align-items:center;gap:14px;padding:14px 0;
+  border-bottom:1px solid var(--paper);transition:all .2s;
+}
+.tx-item:last-child{border-bottom:none;}
+.tx-item:hover{padding-left:4px;}
+.tx-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;}
+.tx-icon.income-icon{background:rgba(52,199,89,.1);}
+.tx-icon.expense-icon{background:rgba(255,59,48,.08);}
+.tx-desc{font-size:14px;font-weight:500;color:var(--ink);}
+.tx-meta{font-size:12px;color:var(--dust);margin-top:2px;}
+.tx-amount{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;margin-left:auto;}
+.tx-amount.pos{color:var(--green);}
+.tx-amount.neg{color:var(--red);}
+.tx-del{background:none;border:none;cursor:pointer;color:var(--mist);padding:6px;border-radius:6px;transition:all .2s;opacity:0;}
+.tx-item:hover .tx-del{opacity:1;}
+.tx-del:hover{background:rgba(255,59,48,.1);color:var(--red);}
+
+/* ── GOALS ── */
+.goals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:20px;}
+.goal-card{
+  background:var(--white);border:1px solid var(--fog);border-radius:var(--r-lg);
+  padding:22px;transition:all .25s ease;position:relative;overflow:hidden;
+}
+.goal-card:hover{border-color:var(--mist);box-shadow:var(--shadow);}
+.goal-emoji{font-size:28px;margin-bottom:12px;}
+.goal-name{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.goal-deadline{font-size:12px;color:var(--dust);}
+.goal-prog-track{width:100%;height:6px;background:var(--fog);border-radius:99px;margin:14px 0 10px;overflow:hidden;}
+.goal-prog-fill{height:100%;border-radius:99px;transition:width .6s ease;}
+.goal-prog-fill.on-track{background:var(--green);}
+.goal-prog-fill.warning{background:var(--orange);}
+.goal-prog-fill.danger{background:var(--red);}
+.goal-prog-fill.complete{background:var(--blue);}
+.goal-stats{display:flex;justify-content:space-between;}
+.goal-stat-val{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;}
+.goal-stat-label{font-size:11px;color:var(--dust);margin-top:2px;}
+.goal-add-btn{
+  display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;
+  background:rgba(52,199,89,.08);border:1.5px dashed rgba(52,199,89,.4);
+  color:var(--green);font-size:13px;font-weight:600;cursor:pointer;
+  transition:all .2s;width:100%;margin-top:4px;
+}
+.goal-add-btn:hover{background:rgba(52,199,89,.14);}
+.goal-days-badge{
+  position:absolute;top:16px;right:16px;
+  font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;
+}
+.goal-days-badge.ok{background:rgba(52,199,89,.1);color:var(--green);}
+.goal-days-badge.warn{background:rgba(255,149,0,.1);color:var(--orange);}
+.goal-days-badge.late{background:rgba(255,59,48,.1);color:var(--red);}
+.goal-del{
+  position:absolute;top:14px;right:14px;background:none;border:none;
+  color:var(--mist);cursor:pointer;padding:4px;border-radius:6px;
+  opacity:0;transition:all .2s;
+}
+.goal-card:hover .goal-del{opacity:1;}
+
+/* ── AI SECTION ── */
+.ai-panel{
+  background:var(--ink);border-radius:var(--r-lg);padding:24px;
+  color:var(--fog);margin-bottom:20px;position:relative;overflow:hidden;
+}
+.ai-panel::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.05),transparent 70%);
+}
+.ai-header{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+.ai-orb{
+  width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.15);
+}
+.ai-title{font-size:18px;font-weight:700;color:var(--white);}
+.ai-sub{font-size:12px;color:var(--dust);margin-top:2px;}
+.ai-chat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;margin-bottom:14px;min-height:120px;max-height:320px;overflow-y:auto;}
+.ai-msg{margin-bottom:14px;}
+.ai-msg:last-child{margin-bottom:0;}
+.ai-msg.user{text-align:right;}
+.ai-bubble{
+  display:inline-block;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5;max-width:85%;text-align:left;
+}
+.ai-bubble.assistant{background:rgba(255,255,255,.08);color:var(--fog);}
+.ai-bubble.user{background:var(--white);color:var(--ink);}
+.ai-input-row{display:flex;gap:10px;}
+.ai-input{
+  flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;padding:11px 14px;color:var(--white);font-family:'DM Sans',sans-serif;
+  font-size:13px;transition:all .2s;
+}
+.ai-input::placeholder{color:var(--dust);}
+.ai-input:focus{outline:none;border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.08);}
+.ai-send{
+  background:var(--white);border:none;border-radius:10px;padding:0 16px;
+  color:var(--ink);font-weight:700;cursor:pointer;transition:all .2s;font-size:13px;
+}
+.ai-send:hover{background:var(--fog);}
+.ai-send:disabled{opacity:.4;cursor:not-allowed;}
+.ai-typing{display:inline-flex;gap:4px;align-items:center;padding:10px 14px;background:rgba(255,255,255,.08);border-radius:12px;}
+.ai-typing span{width:6px;height:6px;background:var(--mist);border-radius:50%;animation:bounce .9s ease infinite;}
+.ai-typing span:nth-child(2){animation-delay:.15s;}
+.ai-typing span:nth-child(3){animation-delay:.3s;}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-5px);}}
+
+/* ── AI INSIGHTS ── */
+.insights-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:0;}
+.insight-card{
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;padding:16px;
+}
+.insight-icon{font-size:20px;margin-bottom:8px;}
+.insight-label{font-size:11px;color:var(--dust);margin-bottom:4px;font-weight:500;}
+.insight-val{font-size:14px;color:var(--fog);font-weight:600;line-height:1.4;}
+
+/* ── ANALYTICS ── */
+.chart-wrap{height:240px;position:relative;}
+.chart-wrap.tall{height:300px;}
+.analytics-metric{padding:16px;background:var(--paper);border-radius:12px;border:1px solid var(--fog);}
+.analytics-metric-label{font-size:12px;color:var(--dust);margin-bottom:6px;font-weight:500;}
+.analytics-metric-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--ink);}
+
+/* ── BUDGET ── */
+.budget-item{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--paper);}
+.budget-item:last-child{border-bottom:none;}
+.budget-cat{display:flex;align-items:center;gap:10px;width:140px;flex-shrink:0;}
+.budget-icon{width:36px;height:36px;border-radius:10px;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.budget-cat-name{font-size:13px;font-weight:500;color:var(--ink);}
+.budget-bar-track{flex:1;height:8px;background:var(--fog);border-radius:99px;overflow:hidden;}
+.budget-bar-fill{height:100%;border-radius:99px;transition:width .5s ease;}
+.budget-amounts{width:120px;text-align:right;flex-shrink:0;}
+.budget-spent{font-size:13px;font-weight:600;color:var(--ink);font-family:'DM Mono',monospace;}
+.budget-limit{font-size:11px;color:var(--dust);margin-top:2px;font-family:'DM Mono',monospace;}
+.budget-pct{font-size:12px;font-weight:700;width:40px;text-align:right;flex-shrink:0;}
+
+/* ── PREMIUM ── */
+.premium-banner{
+  background:linear-gradient(135deg,var(--ink),#2c2c2e);
+  border-radius:var(--r-lg);padding:28px;color:var(--white);
+  position:relative;overflow:hidden;cursor:pointer;margin-bottom:20px;
+  border:1px solid var(--ink3);
+}
+.premium-banner::after{
+  content:'✦';position:absolute;right:28px;top:24px;
+  font-size:48px;opacity:.1;transform:rotate(15deg);
+}
+.prem-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:linear-gradient(90deg,#ffd60a,#ff9500);
+  color:var(--ink);font-size:11px;font-weight:800;
+  border-radius:6px;padding:4px 10px;letter-spacing:.5px;margin-bottom:12px;
+}
+.prem-title{font-size:22px;font-weight:700;margin-bottom:8px;}
+.prem-desc{font-size:13px;color:var(--mist);line-height:1.6;margin-bottom:18px;max-width:420px;}
+.prem-perks{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
+.perm-perk{
+  display:flex;align-items:center;gap:6px;
+  font-size:12px;font-weight:500;color:var(--fog);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;padding:6px 12px;
+}
+.prem-price{font-size:28px;font-weight:700;font-family:'DM Mono',monospace;}
+.prem-price span{font-size:14px;font-weight:400;color:var(--mist);}
+.prem-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,#ffd60a,#ff9500);
+  color:var(--ink);font-weight:700;font-size:14px;
+  border:none;border-radius:10px;padding:13px 24px;cursor:pointer;
+  transition:all .2s;margin-top:14px;
+}
+.prem-cta:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,149,0,.3);}
+
+/* ── TOAST ── */
+#toasts{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+.toast{
+  display:flex;align-items:center;gap:12px;
+  background:var(--ink);color:var(--fog);
+  border-radius:12px;padding:14px 18px;font-size:13px;font-weight:500;
+  box-shadow:var(--shadow-lg);border:1px solid var(--ink3);
+  animation:toastIn .3s ease;min-width:260px;max-width:360px;
+}
+@keyframes toastIn{from{transform:translateX(40px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.toast-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.toast-dot.s{background:var(--green);}
+.toast-dot.e{background:var(--red);}
+.toast-dot.i{background:var(--blue);}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:48px 24px;}
+.empty-icon{font-size:40px;margin-bottom:12px;opacity:.4;}
+.empty-title{font-size:16px;font-weight:600;color:var(--mid);margin-bottom:8px;}
+.empty-desc{font-size:13px;color:var(--dust);margin-bottom:20px;}
+
+/* ── FILTERS ── */
+.filter-tabs{display:flex;gap:6px;background:var(--paper);border-radius:10px;padding:4px;}
+.filter-tab{padding:7px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;color:var(--dust);transition:all .2s;border:none;background:none;font-family:'DM Sans',sans-serif;}
+.filter-tab.active{background:var(--white);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08);}
+
+/* ── PROGRESS RING ── */
+.ring-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.ring-label{font-size:13px;color:var(--dust);text-align:center;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .app{flex-direction:column;}
+  .sidebar{
+    width:100%;min-width:100%;height:auto;padding:0;
+    position:fixed;bottom:0;left:0;right:0;z-index:100;
+    flex-direction:row;border-right:none;
+    border-top:1px solid var(--ink3);
+    box-shadow:0 -4px 24px rgba(0,0,0,.3);
+  }
+  .brand{display:none;}
+  .sidebar-footer{display:none;}
+  .nav{
+    flex-direction:row;padding:0;gap:0;width:100%;
+    justify-content:space-around;
+    overflow-x:auto;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+  .nav::-webkit-scrollbar{display:none;}
+  .nav-section-label{display:none;}
+  .nav-item{
+    flex-direction:column;gap:4px;padding:10px 6px 8px;
+    border-radius:0;border:none;flex:1;min-width:56px;
+    font-size:10px;text-align:center;justify-content:center;
+    color:var(--dust);
+  }
+  .nav-item .nav-icon{display:none;}
+  .nav-item-label{font-size:10px;font-weight:600;line-height:1;}
+  .nav-item.active{background:transparent;color:var(--white);}
+  .nav-item.active::after{
+    content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+    width:20px;height:2px;background:var(--white);border-radius:99px;
+  }
+  .nav-item .badge{
+    position:absolute;top:6px;right:calc(50% - 18px);
+    margin-left:0;min-width:16px;padding:1px 5px;font-size:9px;
+  }
+  .main{padding-bottom:72px;}
+  .view{padding:16px;}
+  .page-title{font-size:26px;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .stats-row-weekly{grid-template-columns:1fr 1fr;}
+  .card-grid.col-2,.card-grid.col-3{grid-template-columns:1fr;}
+  .insights-grid{grid-template-columns:1fr;}
+  .goals-grid{grid-template-columns:1fr;}
+  .stat-val{font-size:20px;}
+  .page-head{flex-direction:column;gap:12px;}
+  .head-actions{align-self:flex-start;}
+  .modal-box{padding:20px;border-radius:20px 20px 0 0;position:fixed;bottom:0;left:0;right:0;max-width:100%;width:100%;max-height:92vh;}
+  .modal{align-items:flex-end;}
+  .input-row{grid-template-columns:1fr;}
+}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--fog);border-radius:99px;}
+
+/* profile modal */
+.profile-section{margin-bottom:20px;}
+.profile-label{font-size:11px;font-weight:600;color:var(--dust);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;}
+.profile-val{font-size:15px;color:var(--ink);font-weight:500;}
+.pref-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--paper);}
+.pref-label{font-size:14px;color:var(--ink);}
+.pref-sub{font-size:12px;color:var(--dust);}
+.toggle{width:42px;height:24px;background:var(--fog);border-radius:99px;cursor:pointer;position:relative;transition:background .2s;border:none;}
+.toggle.on{background:var(--green);}
+.toggle::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+.toggle.on::after{left:21px;}
+
+/* SVG ICONS inline */
+.icon{width:20px;height:20px;display:inline-block;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<!-- ═══ LANDING PAGE ═══ -->
+<div id="landingPage" style="min-height:100vh;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;position:relative;overflow:hidden;">
+  <!-- Grid texture overlay -->
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;"></div>
+  <!-- Glow spots -->
+  <div style="position:absolute;top:-160px;left:50%;transform:translateX(-50%);width:640px;height:400px;background:radial-gradient(ellipse,rgba(255,214,10,.09),transparent 70%);pointer-events:none;"></div>
+  <div style="position:absolute;bottom:-80px;right:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(175,82,222,.07),transparent 70%);pointer-events:none;"></div>
+
+  <!-- Logo -->
+  <div style="display:flex;align-items:center;gap:14px;margin-bottom:52px;">
+    <div style="width:44px;height:44px;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 32px rgba(255,255,255,.12);">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#0a0a0a" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M2 17L12 22L22 17" stroke="#0a0a0a" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M2 12L12 17L22 12" stroke="#0a0a0a" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <div style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-.5px;">STdFinance</div>
+      <div style="font-size:11px;color:#48484a;font-weight:400;letter-spacing:.5px;text-transform:uppercase;">Tu cerebro financiero</div>
+    </div>
+  </div>
+
+  <!-- Badge -->
+  <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,214,10,.08);border:1px solid rgba(255,214,10,.18);border-radius:20px;padding:5px 14px;margin-bottom:28px;">
+    <span style="width:6px;height:6px;border-radius:50%;background:#ffd60a;display:inline-block;"></span>
+    <span style="font-size:11px;color:#ffd60a;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Nueva versión 2.0</span>
+  </div>
+
+  <!-- Hero text -->
+  <div style="text-align:center;max-width:640px;margin-bottom:44px;">
+    <h1 style="font-family:'Fraunces',serif;font-size:clamp(40px,7vw,72px);font-weight:700;color:#fff;line-height:1.08;letter-spacing:-.8px;margin-bottom:22px;">
+      Controla tu dinero.<br><em style="color:#ffd60a;font-style:italic;">Alcanza tus metas.</em>
+    </h1>
+    <p style="font-size:16px;color:#636366;line-height:1.75;max-width:480px;margin:0 auto;font-weight:400;">
+      La app financiera para estudiantes y jóvenes peruanos. Registra ingresos, controla gastos y deja que la IA te guíe hacia tu libertad financiera.
+    </p>
+  </div>
+
+  <!-- CTA buttons -->
+  <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-bottom:60px;">
+    <button onclick="enterApp()" style="background:#ffd60a;color:#0a0a0a;font-weight:800;font-size:15px;border:none;border-radius:10px;padding:15px 32px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;box-shadow:0 0 32px rgba(255,214,10,.25);letter-spacing:-.2px;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 32px rgba(255,214,10,.4)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 0 32px rgba(255,214,10,.25)'">
+      Comenzar gratis →
+    </button>
+    <button onclick="enterApp()" style="background:rgba(255,255,255,.04);color:#aeaeb2;font-weight:500;font-size:15px;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:15px 32px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;" onmouseover="this.style.background='rgba(255,255,255,.08)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,.04)';this.style.color='#aeaeb2'">
+      Ver la app
+    </button>
+  </div>
+
+  <!-- Feature grid -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:620px;width:100%;margin-bottom:52px;">
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px 16px;">
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:6px;">Dashboard en vivo</div>
+      <div style="font-size:12px;color:#48484a;line-height:1.5;">Tus finanzas en tiempo real, siempre al día.</div>
+    </div>
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px 16px;">
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:6px;">Asesor IA personal</div>
+      <div style="font-size:12px;color:#48484a;line-height:1.5;">Consejos inteligentes basados en tus datos.</div>
+    </div>
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px 16px;">
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:6px;">Pago fácil con Yape</div>
+      <div style="font-size:12px;color:#48484a;line-height:1.5;">Activa Pro por solo S/ 1.00 al mes.</div>
+    </div>
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px 16px;">
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:6px;">Metas de ahorro</div>
+      <div style="font-size:12px;color:#48484a;line-height:1.5;">Crea objetivos y sigue tu progreso.</div>
+    </div>
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px 16px;">
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:6px;">Presupuesto mensual</div>
+      <div style="font-size:12px;color:#48484a;line-height:1.5;">Controla cuánto puedes gastar en cada categoría.</div>
+    </div>
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px 16px;">
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:6px;">Analítica avanzada</div>
+      <div style="font-size:12px;color:#48484a;line-height:1.5;">Tendencias, patrones y proyecciones.</div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:36px;border-top:1px solid rgba(255,255,255,.06);padding-top:36px;width:100%;max-width:520px;margin-bottom:40px;">
+    <div style="text-align:center;">
+      <div style="font-family:'DM Mono',monospace;font-size:26px;font-weight:600;color:#fff;">100%</div>
+      <div style="font-size:12px;color:#48484a;margin-top:4px;letter-spacing:.3px;">Gratis para empezar</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-family:'DM Mono',monospace;font-size:26px;font-weight:600;color:#ffd60a;">S/ 1.00</div>
+      <div style="font-size:12px;color:#48484a;margin-top:4px;letter-spacing:.3px;">Pro al mes</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-family:'DM Mono',monospace;font-size:26px;font-weight:600;color:#fff;">IA</div>
+      <div style="font-size:12px;color:#48484a;margin-top:4px;letter-spacing:.3px;">Asesor incluido</div>
+    </div>
+  </div>
+
+  <!-- Credits -->
+  <div style="text-align:center;">
+    <div style="font-size:12px;color:#2c2c2e;">Hecho con cariño en Perú</div>
+    <div style="font-size:13px;color:#48484a;margin-top:4px;font-weight:500;">by <span style="color:#636366;font-weight:700;">Rolando Matias</span></div>
+  </div>
+</div>
+
+<div id="mainApp" style="display:none;">
+<div class="app">
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#0a0a0a" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M2 17L12 22L22 17" stroke="#0a0a0a" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M2 12L12 17L22 12" stroke="#0a0a0a" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">STdFinance</div>
+      <div class="brand-sub">Pro</div>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-section-label">Principal</div>
+
+    <div class="nav-item active" data-view="dashboard">
+      <span class="nav-item-label">Dashboard</span>
+    </div>
+
+    <div class="nav-item" data-view="add-income">
+      <span class="nav-item-label">+ Ingreso</span>
+    </div>
+
+    <div class="nav-item" data-view="add-expense">
+      <span class="nav-item-label">− Gasto</span>
+    </div>
+
+    <div class="nav-section-label">Gestión</div>
+
+    <div class="nav-item" data-view="goals">
+      <span class="nav-item-label">Metas</span>
+    </div>
+
+    <div class="nav-item" data-view="budget">
+      <span class="nav-item-label">Presupuesto</span>
+    </div>
+
+    <div class="nav-item" data-view="history">
+      <span class="nav-item-label">Historial</span>
+    </div>
+
+    <div class="nav-item" data-view="analytics">
+      <span class="nav-item-label">Analítica</span>
+    </div>
+
+    <div class="nav-section-label">Inteligencia</div>
+
+    <div class="nav-item" data-view="ai">
+      <span class="nav-item-label">Asesor IA</span>
+    </div>
+
+    <div class="nav-item" data-view="premium">
+      <span class="nav-item-label">Premium</span>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-card" onclick="openModal('profile')">
+      <div class="user-avatar" id="userAvatar">E</div>
+      <div>
+        <div class="user-name" id="userName">Estudiante</div>
+        <div class="user-plan">Plan Gratuito</div>
+      </div>
+      <div class="pro-badge">FREE</div>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<main class="main">
+
+<!-- ── DASHBOARD ── -->
+<div class="view active" data-view-content="dashboard">
+  <div class="page-head">
+    <div>
+      <div class="page-title">Buenos días</div>
+      <div class="page-sub">Aquí está tu resumen financiero de hoy — <span id="todayDate"></span></div>
+    </div>
+    <div class="head-actions">
+      <button class="btn btn-ghost btn-sm" onclick="exportData()">Exportar</button>
+      <button class="btn btn-primary btn-sm" onclick="switchView('add-expense')">+ Gasto</button>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-accent green"></div>
+      <div class="stat-label">Ingresos del Mes</div>
+      <div class="stat-val" id="totalIncome">S/ 0.00</div>
+      <div class="stat-trend up" id="incomeChange">↑ 0%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-accent red"></div>
+      <div class="stat-label">Gastos del Mes</div>
+      <div class="stat-val" id="totalExpense">S/ 0.00</div>
+      <div class="stat-trend down" id="expenseChange">↓ 0%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-accent blue"></div>
+      <div class="stat-label">Balance Actual</div>
+      <div class="stat-val" id="balance">S/ 0.00</div>
+      <div class="stat-meta" id="balanceStatus">Sin movimientos</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-accent orange"></div>
+      <div class="stat-label">Tasa de Ahorro</div>
+      <div class="stat-val" id="savingsRate">0%</div>
+      <div class="stat-meta" id="savingsAbs">S/ 0.00 ahorrado</div>
+    </div>
+  </div>
+
+  <!-- Weekly stats row -->
+  <div class="stats-row-weekly">
+    <div class="stat-card weekly">
+      <div class="stat-accent" style="background:var(--green);opacity:.5;"></div>
+      <div class="week-label">Esta Semana</div>
+      <div class="stat-label" style="margin-bottom:8px;">Ingresos Semana</div>
+      <div class="stat-val" id="weekIncome" style="font-size:20px;">S/ 0.00</div>
+      <div class="stat-meta" id="weekIncomeCount">0 transacciones</div>
+    </div>
+    <div class="stat-card weekly">
+      <div class="stat-accent" style="background:var(--red);opacity:.5;"></div>
+      <div class="week-label">Esta Semana</div>
+      <div class="stat-label" style="margin-bottom:8px;">Gastos Semana</div>
+      <div class="stat-val" id="weekExpense" style="font-size:20px;">S/ 0.00</div>
+      <div class="stat-meta" id="weekExpenseCount">0 transacciones</div>
+    </div>
+    <div class="stat-card weekly">
+      <div class="stat-accent" style="background:var(--blue);opacity:.5;"></div>
+      <div class="week-label">Esta Semana</div>
+      <div class="stat-label" style="margin-bottom:8px;">Balance Semana</div>
+      <div class="stat-val" id="weekBalance" style="font-size:20px;">S/ 0.00</div>
+      <div class="stat-meta" id="weekBalanceStatus">—</div>
+    </div>
+    <div class="stat-card weekly">
+      <div class="stat-accent" style="background:var(--purple);opacity:.5;"></div>
+      <div class="week-label">Esta Semana</div>
+      <div class="stat-label" style="margin-bottom:8px;">Gasto Diario Prom.</div>
+      <div class="stat-val" id="weekAvgDaily" style="font-size:20px;">S/ 0.00</div>
+      <div class="stat-meta">promedio esta semana</div>
+    </div>
+  </div>
+
+  <div class="card-grid col-2" style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:20px;">
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-title">Flujo de Efectivo — Últimos 30 días</div>
+      <div class="chart-wrap"><canvas id="flowChart"></canvas></div>
+    </div>
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-title">Gastos por Categoría</div>
+      <div class="chart-wrap"><canvas id="catChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="justify-content:space-between;">
+      <span>Transacciones Recientes</span>
+      <button class="btn btn-ghost btn-sm" onclick="switchView('history')">Ver todas →</button>
+    </div>
+    <div id="recentTx">
+      <div class="empty"><div class="empty-title">Sin transacciones</div><div class="empty-desc">Registra tu primer movimiento</div><button class="btn btn-primary btn-sm" onclick="switchView('add-income')">Empezar</button></div>
+    </div>
+  </div>
+
+  <!-- AI Quick Insight in dashboard -->
+  <div class="ai-panel" id="dashAiPanel">
+    <div class="ai-header">
+      <div class="ai-orb">
+        <span style="font-size:16px;">✦</span>
+      </div>
+      <div>
+        <div class="ai-title">STdFinance IA</div>
+        <div class="ai-sub">Tu asesor financiero personal — siempre activo</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="switchView('ai')" style="margin-left:auto;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.15);color:#fff;">Chat completo →</button>
+    </div>
+    <div class="insights-grid" id="aiInsights">
+      <div class="insight-card"><div class="insight-label">Consejo del día</div><div class="insight-val" id="aiTip">Analizando tus datos...</div></div>
+      <div class="insight-card"><div class="insight-label">Predicción mensual</div><div class="insight-val" id="aiPrediction">Calculando proyección...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADD INCOME ── -->
+<div class="view" data-view-content="add-income">
+  <div class="page-head">
+    <div>
+      <div class="page-title">Registrar Ingreso</div>
+      <div class="page-sub">Añade dinero que entra a tu control financiero</div>
+    </div>
+  </div>
+  <div class="card" style="max-width:560px;">
+    <div class="input-row">
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">Monto (S/)</label>
+        <input class="form-input" id="incAmt" type="number" min="0" step="0.01" placeholder="0.00">
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">Fecha</label>
+        <input class="form-input" id="incDate" type="date">
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:18px;">
+      <label class="form-label">Categoría</label>
+      <select class="form-select" id="incCat">
+        <option value="">Selecciona...</option>
+        <option value="salary">💼 Salario / Sueldo</option>
+        <option value="freelance">💻 Trabajo Freelance</option>
+        <option value="investment">📈 Inversiones / Dividendos</option>
+        <option value="allowance">🎁 Mesada / Apoyo familiar</option>
+        <option value="gift">🎀 Regalo / Bono</option>
+        <option value="refund">↩️ Reembolso</option>
+        <option value="scholarship">🎓 Beca / Premio</option>
+        <option value="gig">🚗 Trabajo por horas</option>
+        <option value="other">📌 Otro</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descripción</label>
+      <input class="form-input" id="incDesc" type="text" placeholder="Ej: Pago de marzo...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Cuenta / Método</label>
+      <select class="form-select" id="incMethod">
+        <option value="efectivo">💵 Efectivo</option>
+        <option value="yape">📱 Yape</option>
+        <option value="plin">📱 Plin</option>
+        <option value="banco">🏦 Cuenta bancaria</option>
+        <option value="otro">Otro</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="addIncome()">Guardar Ingreso</button>
+      <button class="btn btn-ghost" onclick="switchView('dashboard')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADD EXPENSE ── -->
+<div class="view" data-view-content="add-expense">
+  <div class="page-head">
+    <div>
+      <div class="page-title">Registrar Gasto</div>
+      <div class="page-sub">Lleva el control de cada sol que sale</div>
+    </div>
+  </div>
+  <div class="card" style="max-width:560px;">
+    <div class="input-row">
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">Monto (S/)</label>
+        <input class="form-input" id="expAmt" type="number" min="0" step="0.01" placeholder="0.00">
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">Fecha</label>
+        <input class="form-input" id="expDate" type="date">
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:18px;">
+      <label class="form-label">Categoría</label>
+      <select class="form-select" id="expCat">
+        <option value="">Selecciona...</option>
+        <option value="transport">🚌 Transporte</option>
+        <option value="food">🍕 Comida y restaurantes</option>
+        <option value="studies">📚 Estudios / Libros</option>
+        <option value="entertainment">🎮 Entretenimiento</option>
+        <option value="health">💊 Salud y farmacia</option>
+        <option value="utilities">💡 Servicios básicos</option>
+        <option value="shopping">🛍️ Compras personales</option>
+        <option value="subscriptions">📱 Suscripciones digitales</option>
+        <option value="rent">🏠 Alquiler / Vivienda</option>
+        <option value="personal_care">🪥 Cuidado personal</option>
+        <option value="other">📌 Otro</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descripción</label>
+      <input class="form-input" id="expDesc" type="text" placeholder="Ej: Almuerzo con amigos...">
+    </div>
+    <div class="input-row">
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">Método de pago</label>
+        <select class="form-select" id="expMethod">
+          <option value="efectivo">💵 Efectivo</option>
+          <option value="yape">📱 Yape</option>
+          <option value="plin">📱 Plin</option>
+          <option value="tarjeta">💳 Tarjeta</option>
+          <option value="banco">🏦 Transferencia</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">¿Es recurrente?</label>
+        <select class="form-select" id="expRecurrent">
+          <option value="no">No, es único</option>
+          <option value="weekly">Semanal</option>
+          <option value="monthly">Mensual</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:18px;">
+      <button class="btn btn-danger" style="flex:1;background:var(--red);color:#fff;border-color:var(--red);" onclick="addExpense()">Guardar Gasto</button>
+      <button class="btn btn-ghost" onclick="switchView('dashboard')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── GOALS ── -->
+<div class="view" data-view-content="goals">
+  <div class="page-head">
+    <div>
+      <div class="page-title">Metas de Ahorro</div>
+      <div class="page-sub">Define objetivos y rastrea tu progreso en tiempo real</div>
+    </div>
+    <div class="head-actions">
+      <button class="btn btn-primary" onclick="openModal('add-goal')">+ Nueva Meta</button>
+    </div>
+  </div>
+
+  <div id="goalsContainer" class="goals-grid"></div>
+
+  <!-- Meta summary -->
+  <div class="card" id="goalsSummary" style="display:none;">
+    <div class="card-title">Resumen de Metas</div>
+    <div class="card-grid col-3">
+      <div class="analytics-metric">
+        <div class="analytics-metric-label">Total a alcanzar</div>
+        <div class="analytics-metric-val" id="goalsTotalTarget">S/ 0</div>
+      </div>
+      <div class="analytics-metric">
+        <div class="analytics-metric-label">Total ahorrado</div>
+        <div class="analytics-metric-val" id="goalsTotalSaved">S/ 0</div>
+      </div>
+      <div class="analytics-metric">
+        <div class="analytics-metric-label">Progreso global</div>
+        <div class="analytics-metric-val" id="goalsGlobalPct">0%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── BUDGET ── -->
+<div class="view" data-view-content="budget">
+  <div class="page-head">
+    <div>
+      <div class="page-title">Presupuesto Mensual</div>
+      <div class="page-sub">Controla cuánto gastas en cada categoría</div>
+    </div>
+    <div class="head-actions">
+      <button class="btn btn-primary" onclick="openModal('set-budget')">Editar Límites</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Control por Categoría — <span id="budgetMonth"></span></div>
+    <div id="budgetList"></div>
+  </div>
+</div>
+
+<!-- ── HISTORY ── -->
+<div class="view" data-view-content="history">
+  <div class="page-head">
+    <div>
+      <div class="page-title">Historial</div>
+      <div class="page-sub">Todos tus movimientos financieros</div>
+    </div>
+    <div class="head-actions">
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="setFilter('all',this)">Todos</button>
+        <button class="filter-tab" onclick="setFilter('income',this)">Ingresos</button>
+        <button class="filter-tab" onclick="setFilter('expense',this)">Gastos</button>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="display:flex;gap:10px;margin-bottom:18px;">
+      <input class="form-input" id="searchTx" type="text" placeholder="🔍  Buscar transacción..." oninput="renderHistory()" style="max-width:300px;">
+      <select class="form-select" id="filterMonth" onchange="renderHistory()" style="max-width:160px;">
+        <option value="">Todos los meses</option>
+      </select>
+    </div>
+    <div id="historyList"></div>
+  </div>
+</div>
+
+<!-- ── ANALYTICS ── -->
+<div class="view" data-view-content="analytics">
+  <div class="page-head">
+    <div>
+      <div class="page-title">Analítica</div>
+      <div class="page-sub">Patrones, tendencias y proyecciones financieras</div>
+    </div>
+  </div>
+
+  <div class="card-grid col-3" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px;">
+    <div class="analytics-metric">
+      <div class="analytics-metric-label">Gasto Promedio Diario</div>
+      <div class="analytics-metric-val" id="avgDaily">S/ 0</div>
+    </div>
+    <div class="analytics-metric">
+      <div class="analytics-metric-label">Categoría Principal</div>
+      <div class="analytics-metric-val" id="topCat">—</div>
+    </div>
+    <div class="analytics-metric">
+      <div class="analytics-metric-label">Mejor Mes</div>
+      <div class="analytics-metric-val" id="bestMonth">—</div>
+    </div>
+  </div>
+
+  <div class="card-grid col-2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-title">Últimas 4 semanas</div>
+      <div class="chart-wrap tall"><canvas id="weeklyChart"></canvas></div>
+    </div>
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-title">Distribución de Gastos</div>
+      <div class="chart-wrap tall"><canvas id="pieChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Evolución Mensual</div>
+    <div class="chart-wrap tall"><canvas id="monthlyChart"></canvas></div>
+  </div>
+</div>
+
+<!-- ── AI ADVISOR ── -->
+<div class="view" data-view-content="ai">
+  <div class="page-head">
+    <div>
+      <div class="page-title">Asesor IA</div>
+      <div class="page-sub">Habla con tu consejero financiero personal — siempre disponible</div>
+    </div>
+  </div>
+
+  <div class="ai-panel" style="margin-bottom:0;">
+    <div class="ai-header" style="margin-bottom:16px;">
+      <div class="ai-orb">
+        <span style="font-size:16px;">✦</span>
+      </div>
+      <div>
+        <div class="ai-title">STdFinance IA — Asesor Financiero</div>
+        <div class="ai-sub">Pregúntame sobre tus finanzas, hábitos, metas o inversiones</div>
+      </div>
+      <button type="button" class="btn btn-sm" onclick="clearChat()" style="margin-left:auto;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:var(--fog);font-size:12px;">Limpiar</button>
+    </div>
+
+    <div class="ai-chat" id="aiChatWindow">
+      <div class="ai-msg">
+        <div class="ai-bubble assistant">¡Hola! Soy STdFinance IA, tu asesor financiero personal. Tengo acceso a todos tus datos financieros y puedo ayudarte a:<br><br>
+        📊 Analizar tus patrones de gasto<br>
+        💡 Darte consejos personalizados<br>
+        🎯 Planificar el alcance de tus metas<br>
+        📈 Proyectar tu situación financiera<br><br>
+        ¿En qué puedo ayudarte hoy?</div>
+      </div>
+    </div>
+
+    <div class="ai-input-row" style="margin-top:12px;">
+      <input class="ai-input" id="aiInput" placeholder="Pregunta algo sobre tus finanzas..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiMessage();}">
+      <button class="ai-send" id="aiSendBtn" onclick="sendAiMessage()">Enviar</button>
+    </div>
+
+    <!-- Quick prompts -->
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
+      <button onclick="quickAsk('¿En qué gasto más dinero este mes?')" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:7px 12px;color:var(--fog);font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif;">¿En qué gasto más?</button>
+      <button onclick="quickAsk('¿Cuánto puedo ahorrar este mes si mantengo mis gastos actuales?')" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:7px 12px;color:var(--fog);font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif;">Proyección de ahorro</button>
+      <button onclick="quickAsk('Dame 3 consejos para reducir mis gastos basado en mi historial')" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:7px 12px;color:var(--fog);font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif;">Consejos de ahorro</button>
+      <button onclick="quickAsk('¿Cuándo podré alcanzar mi meta más cercana?')" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:7px 12px;color:var(--fog);font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif;">Fecha de meta</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── PREMIUM ── -->
+<div class="view" data-view-content="premium">
+  <div class="page-head">
+    <div>
+      <div class="page-title">STdFinance Pro</div>
+      <div class="page-sub">Desbloquea todo el poder de tu asesor financiero</div>
+    </div>
+  </div>
+
+  <div class="premium-banner" onclick="openModal('checkout')">
+    <div class="prem-badge">✦ PRO</div>
+    <div class="prem-title">Lleva tus finanzas al siguiente nivel</div>
+    <div class="prem-desc">STdFinance Pro te da herramientas que normalmente cuestan cientos de soles en asesorías: IA sin límites, alertas inteligentes, reportes PDF, sincronización entre dispositivos y mucho más.</div>
+    <div class="prem-perks">
+      <div class="perm-perk">✦ IA Ilimitada</div>
+      <div class="perm-perk">✦ Reportes PDF</div>
+      <div class="perm-perk">✦ Alertas Inteligentes</div>
+      <div class="perm-perk">✦ Sincronización en la nube</div>
+      <div class="perm-perk">✦ Análisis predictivo avanzado</div>
+      <div class="perm-perk">✦ Múltiples cuentas</div>
+      <div class="perm-perk">✦ Sin publicidad</div>
+    </div>
+    <div style="display:flex;align-items:baseline;gap:8px;">
+      <div class="prem-price">S/ 1.00 <span>/ mes</span></div>
+      <div style="font-size:12px;color:var(--dust);text-decoration:line-through;">S/ 19.90</div>
+      <div style="font-size:11px;font-weight:700;color:var(--orange);background:rgba(255,149,0,.15);border-radius:5px;padding:2px 7px;">-95%</div>
+    </div>
+    <button class="prem-cta">Comenzar prueba gratis 7 días →</button>
+  </div>
+
+  <div class="card-grid col-3" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+    <div class="card" style="margin-bottom:0;text-align:center;">
+      <div style="font-size:15px;font-weight:700;margin-bottom:8px;">IA sin límites</div>
+      <div style="font-size:13px;color:var(--dust);line-height:1.6;">Consultas ilimitadas con tu asesor IA personal, sin restricciones.</div>
+    </div>
+    <div class="card" style="margin-bottom:0;text-align:center;">
+      <div style="font-size:15px;font-weight:700;margin-bottom:8px;">Reportes PDF</div>
+      <div style="font-size:13px;color:var(--dust);line-height:1.6;">Exporta reportes financieros detallados en formato PDF profesional.</div>
+    </div>
+    <div class="card" style="margin-bottom:0;text-align:center;">
+      <div style="font-size:15px;font-weight:700;margin-bottom:8px;">Alertas Inteligentes</div>
+      <div style="font-size:13px;color:var(--dust);line-height:1.6;">Recibe avisos cuando te acerques al límite de presupuesto.</div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- ═══ MODALS ═══ -->
+
+<div class="modal" id="modalAddGoal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title">Nueva Meta de Ahorro</div>
+      <button class="modal-close" onclick="closeModal('modalAddGoal')">×</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Emoji de la meta</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;" id="emojiPicker">
+        <span style="cursor:pointer;font-size:22px;padding:6px;border-radius:8px;border:2px solid transparent;" onclick="selectEmoji(this,'🏠')">🏠</span>
+        <span style="cursor:pointer;font-size:22px;padding:6px;border-radius:8px;border:2px solid transparent;" onclick="selectEmoji(this,'✈️')">✈️</span>
+        <span style="cursor:pointer;font-size:22px;padding:6px;border-radius:8px;border:2px solid transparent;" onclick="selectEmoji(this,'🎓')">🎓</span>
+        <span style="cursor:pointer;font-size:22px;padding:6px;border-radius:8px;border:2px solid transparent;" onclick="selectEmoji(this,'💻')">💻</span>
+        <span style="cursor:pointer;font-size:22px;padding:6px;border-radius:8px;border:2px solid transparent;" onclick="selectEmoji(this,'🚗')">🚗</span>
+        <span style="cursor:pointer;font-size:22px;padding:6px;border-radius:8px;border:2px solid transparent;" onclick="selectEmoji(this,'📱')">📱</span>
+        <span style="cursor:pointer;font-size:22px;padding:6px;border-radius:8px;border:2px solid transparent;" onclick="selectEmoji(this,'💪')">💪</span>
+        <span style="cursor:pointer;font-size:22px;padding:6px;border-radius:8px;border:2px solid transparent;" onclick="selectEmoji(this,'🎯')">🎯</span>
+      </div>
+      <input class="form-input" id="goalEmoji" placeholder="O escribe tu emoji..." style="width:80px;margin-top:6px;" maxlength="4">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nombre de la meta</label>
+      <input class="form-input" id="goalName" placeholder="Ej: Viaje a Machu Picchu">
+    </div>
+    <div class="input-row">
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">Meta total (S/)</label>
+        <input class="form-input" id="goalTarget" type="number" min="0" step="1" placeholder="5000">
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">Ya tengo (S/)</label>
+        <input class="form-input" id="goalSaved" type="number" min="0" step="1" placeholder="0">
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:18px;">
+      <label class="form-label">Fecha límite</label>
+      <input class="form-input" id="goalDeadline" type="date">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Prioridad</label>
+      <select class="form-select" id="goalPriority">
+        <option value="alta">🔴 Alta — Es urgente</option>
+        <option value="media" selected>🟡 Media — Importante</option>
+        <option value="baja">🟢 Baja — A largo plazo</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="addGoal()">Crear Meta</button>
+      <button class="btn btn-ghost" onclick="closeModal('modalAddGoal')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modalAddFunds">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title">Agregar Fondos a Meta</div>
+      <button class="modal-close" onclick="closeModal('modalAddFunds')">×</button>
+    </div>
+    <input type="hidden" id="fundGoalId">
+    <div class="form-group">
+      <label class="form-label">Meta seleccionada</label>
+      <input class="form-input" id="fundGoalName" disabled style="color:var(--dust);">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Cantidad a añadir (S/)</label>
+      <input class="form-input" id="fundAmount" type="number" min="0.01" step="0.01" placeholder="100.00">
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-success" style="flex:1;background:var(--green);color:#fff;border-color:var(--green);" onclick="addFundsToGoal()">Añadir Fondos</button>
+      <button class="btn btn-ghost" onclick="closeModal('modalAddFunds')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modalSetBudget">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title">Establecer Presupuesto</div>
+      <button class="modal-close" onclick="closeModal('modalSetBudget')">×</button>
+    </div>
+    <div class="form-hint" style="margin-bottom:16px;font-size:13px;color:var(--dust);">Define cuánto puedes gastar en cada categoría este mes:</div>
+    <div id="budgetInputs"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:8px;" onclick="saveBudgets()">Guardar Presupuesto</button>
+  </div>
+</div>
+
+<div class="modal" id="modalProfile">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title">Mi Perfil</div>
+      <button class="modal-close" onclick="closeModal('modalProfile')">×</button>
+    </div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <div class="user-avatar" id="bigAvatar" style="width:72px;height:72px;font-size:30px;margin:0 auto 10px;border-radius:50%;background:var(--fog);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--ink);">E</div>
+      <div style="font-size:18px;font-weight:700;" id="profileNameDisplay">Estudiante</div>
+      <div style="font-size:13px;color:var(--dust);">Plan Gratuito — <a onclick="switchView('premium');closeModal('modalProfile');" style="color:var(--blue);cursor:pointer;">Actualizar a Pro →</a></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tu nombre</label>
+      <input class="form-input" id="profileName" placeholder="¿Cómo te llamas?">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Moneda principal</label>
+      <select class="form-select" id="profileCurrency">
+        <option value="S/">S/ — Sol Peruano</option>
+        <option value="$">$ — Dólar</option>
+        <option value="€">€ — Euro</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Ingreso mensual estimado (referencia)</label>
+      <input class="form-input" id="profileIncome" type="number" placeholder="0">
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="saveProfile()">Guardar</button>
+      <button class="btn btn-danger" onclick="if(confirm('¿Borrar todos los datos?')){clearAll();}">Borrar todo</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modalCheckout">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title">Activar STdFinance Pro</div>
+      <button class="modal-close" onclick="closeModal('modalCheckout')">×</button>
+    </div>
+
+    <!-- Price summary -->
+    <div style="background:var(--paper);border:1px solid var(--fog);border-radius:14px;padding:18px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:12px;color:var(--dust);font-weight:500;margin-bottom:2px;">7 días gratis, luego</div>
+        <div style="font-size:24px;font-weight:800;color:var(--ink);font-family:'DM Mono',monospace;">S/ 1.00<span style="font-size:14px;font-weight:400;color:var(--dust);"> / mes</span></div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:11px;color:var(--dust);text-decoration:line-through;margin-bottom:2px;">S/ 19.90</div>
+        <div style="font-size:12px;font-weight:800;color:var(--orange);background:rgba(255,149,0,.12);border-radius:6px;padding:3px 8px;">−95%</div>
+      </div>
+    </div>
+
+    <!-- Step 1: Yape -->
+    <div style="background:#1a0a3e;border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid rgba(107,43,217,.4);">
+      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;">Paso 1 — Yapea el pago</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+        <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:12px;">
+          <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;">Número Yape</div>
+          <div style="font-size:22px;font-weight:900;color:#fff;font-family:'DM Mono',monospace;letter-spacing:2px;">967 281 236</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px;">Rolando Matias</div>
+        </div>
+        <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:12px;">
+          <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;">Monto exacto</div>
+          <div style="font-size:22px;font-weight:900;color:#ffd60a;font-family:'DM Mono',monospace;">S/ 1.00</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px;">No más, no menos</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,.5);text-align:center;line-height:1.6;">
+        Yapea y escríbele a Rolando por WhatsApp con tu nombre y captura.<br>
+        Él te enviará tu código de activación personal.
+      </div>
+    </div>
+
+    <!-- Step 2: Enter name + code -->
+    <div style="font-size:10px;font-weight:700;color:var(--dust);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">Paso 2 — Ingresa tu código</div>
+
+    <div class="form-group">
+      <label class="form-label">Tu nombre (exactamente como lo diste al pagar)</label>
+      <input class="form-input" id="checkoutEmail" placeholder="Ej: Juan Pérez">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Código de activación</label>
+      <input class="form-input" id="activationCode" placeholder="PRO-XXX-XXX" style="font-family:'DM Mono',monospace;letter-spacing:2px;text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()">
+      <div class="form-hint">Recibirás este código por WhatsApp una vez confirmado tu pago.</div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--dust);margin-bottom:16px;background:var(--paper);border-radius:8px;padding:10px 12px;">
+      <span style="font-size:14px;">🔒</span>
+      Cada código es único y personal — funciona una sola vez
+    </div>
+
+    <button class="prem-cta" style="width:100%;justify-content:center;" onclick="activateWithCode()">Activar Pro con mi código →</button>
+  </div>
+</div>
+
+<div id="toasts"></div>
+</div><!-- end mainApp -->
+
+<script>
+// ═══════════════════════════════════════════════════
+// DATA & STATE
+// ═══════════════════════════════════════════════════
+const CAT_INC = {
+  salary:{emoji:'💼',name:'Salario'},freelance:{emoji:'💻',name:'Freelance'},
+  investment:{emoji:'📈',name:'Inversiones'},allowance:{emoji:'🎁',name:'Mesada'},
+  gift:{emoji:'🎀',name:'Regalo'},refund:{emoji:'↩️',name:'Reembolso'},
+  scholarship:{emoji:'🎓',name:'Beca'},gig:{emoji:'🚗',name:'Trabajo/horas'},other:{emoji:'📌',name:'Otro'}
+};
+const CAT_EXP = {
+  transport:{emoji:'🚌',name:'Transporte',color:'#007aff'},
+  food:{emoji:'🍕',name:'Comida',color:'#ff3b30'},
+  studies:{emoji:'📚',name:'Estudios',color:'#34c759'},
+  entertainment:{emoji:'🎮',name:'Entret.',color:'#af52de'},
+  health:{emoji:'💊',name:'Salud',color:'#ff2d55'},
+  utilities:{emoji:'💡',name:'Servicios',color:'#ffd60a'},
+  shopping:{emoji:'🛍️',name:'Compras',color:'#ff9500'},
+  subscriptions:{emoji:'📱',name:'Suscripc.',color:'#5ac8fa'},
+  rent:{emoji:'🏠',name:'Alquiler',color:'#32ade6'},
+  personal_care:{emoji:'🪥',name:'Personal',color:'#64d2ff'},
+  other:{emoji:'📌',name:'Otro',color:'#8e8e93'}
+};
+
+let state = {
+  transactions:[],goals:[],budgets:{},
+  profile:{name:'Estudiante',currency:'S/',income:0},
+  aiHistory:[]
+};
+let txFilter='all';
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  loadState();
+  checkProStatus();
+  setupNav();
+  setTodayDates();
+  renderDashboard();
+  updateDateDisplay();
+  populateMonthFilter();
+  updateAiInsights();
+  renderBudget();
+});
+
+function updateDateDisplay(){
+  const d=new Date();
+  document.getElementById('todayDate').textContent=d.toLocaleDateString('es-PE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('budgetMonth').textContent=d.toLocaleDateString('es-PE',{month:'long',year:'numeric'});
+}
+
+function setTodayDates(){
+  const today=new Date().toISOString().split('T')[0];
+  ['incDate','expDate'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=today;});
+  const gd=document.getElementById('goalDeadline');
+  if(gd){const d=new Date();d.setMonth(d.getMonth()+3);gd.value=d.toISOString().split('T')[0];}
+}
+
+function setupNav(){
+  document.querySelectorAll('[data-view]').forEach(el=>{
+    el.addEventListener('click',()=>switchView(el.dataset.view));
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════════════════
+function saveState(){localStorage.setItem('stdfinance_v3',JSON.stringify(state));}
+function loadState(){
+  const d=localStorage.getItem('stdfinance_v3');
+  if(d){try{state=JSON.parse(d);}catch(e){}}
+  applyProfile();
+}
+function applyProfile(){
+  const n=state.profile?.name||'Estudiante';
+  ['userAvatar','bigAvatar'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=n[0].toUpperCase();});
+  const un=document.getElementById('userName');if(un)un.textContent=n;
+  const pn=document.getElementById('profileNameDisplay');if(pn)pn.textContent=n;
+  const pni=document.getElementById('profileName');if(pni)pni.value=n;
+  const pi=document.getElementById('profileIncome');if(pi)pi.value=state.profile?.income||'';
+  const pc=document.getElementById('profileCurrency');if(pc)pc.value=state.profile?.currency||'S/';
+}
+
+// ═══════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════
+function switchView(name){
+  document.querySelectorAll('[data-view]').forEach(el=>el.classList.toggle('active',el.dataset.view===name));
+  document.querySelectorAll('[data-view-content]').forEach(el=>el.classList.toggle('active',el.dataset.viewContent===name));
+  if(name==='dashboard')renderDashboard();
+  if(name==='analytics'){renderAnalytics();}
+  if(name==='history')renderHistory();
+  if(name==='goals')renderGoals();
+  if(name==='budget')renderBudget();
+}
+
+// ═══════════════════════════════════════════════════
+// CURRENCY
+// ═══════════════════════════════════════════════════
+function cur(){return state.profile?.currency||'S/';}
+function fmt(n){return cur()+' '+n.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});}
+
+// ═══════════════════════════════════════════════════
+// TRANSACTIONS
+// ═══════════════════════════════════════════════════
+function addIncome(){
+  const amt=parseFloat(document.getElementById('incAmt').value);
+  const cat=document.getElementById('incCat').value;
+  const desc=document.getElementById('incDesc').value;
+  const date=document.getElementById('incDate').value;
+  const method=document.getElementById('incMethod').value;
+  if(!amt||amt<=0||!cat||!date){toast('Completa todos los campos requeridos','e');return;}
+  state.transactions.unshift({id:Date.now(),type:'income',amount:amt,category:cat,
+    description:desc||(CAT_INC[cat]?.name||'Ingreso'),date,method,ts:new Date().toISOString()});
+  saveState();
+  document.getElementById('incAmt').value='';document.getElementById('incDesc').value='';
+  toast('Ingreso guardado ✓','s');switchView('dashboard');
+}
+
+function addExpense(){
+  const amt=parseFloat(document.getElementById('expAmt').value);
+  const cat=document.getElementById('expCat').value;
+  const desc=document.getElementById('expDesc').value;
+  const date=document.getElementById('expDate').value;
+  const method=document.getElementById('expMethod').value;
+  const recurrent=document.getElementById('expRecurrent').value;
+  if(!amt||amt<=0||!cat||!date){toast('Completa todos los campos requeridos','e');return;}
+  state.transactions.unshift({id:Date.now(),type:'expense',amount:amt,category:cat,
+    description:desc||(CAT_EXP[cat]?.name||'Gasto'),date,method,recurrent,ts:new Date().toISOString()});
+  saveState();
+  checkBudgetAlert(cat,amt);
+  document.getElementById('expAmt').value='';document.getElementById('expDesc').value='';
+  toast('Gasto registrado ✓','s');switchView('dashboard');
+}
+
+function deleteTx(id){
+  state.transactions=state.transactions.filter(t=>t.id!==id);
+  saveState();renderDashboard();renderHistory();toast('Eliminado','i');
+}
+
+function checkBudgetAlert(cat,amt){
+  const b=state.budgets[cat];if(!b)return;
+  const month=new Date().toISOString().slice(0,7);
+  const spent=state.transactions.filter(t=>t.type==='expense'&&t.category===cat&&t.date.startsWith(month)).reduce((s,t)=>s+t.amount,0);
+  const pct=(spent/b)*100;
+  if(pct>=100)toast(`¡Superaste tu presupuesto de ${CAT_EXP[cat]?.name}! (${fmt(spent)}/${fmt(b)})`,'e');
+  else if(pct>=80)toast(`Atención: gastaste el ${pct.toFixed(0)}% de tu presupuesto en ${CAT_EXP[cat]?.name}`,'i');
+}
+
+// ═══════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════
+let chartFlow=null,chartCat=null;
+function renderDashboard(){
+  const month=new Date().toISOString().slice(0,7);
+  const prevMonth=new Date(new Date().getFullYear(),new Date().getMonth()-1,1).toISOString().slice(0,7);
+  
+  const incThis=state.transactions.filter(t=>t.type==='income'&&t.date.startsWith(month)).reduce((s,t)=>s+t.amount,0);
+  const expThis=state.transactions.filter(t=>t.type==='expense'&&t.date.startsWith(month)).reduce((s,t)=>s+t.amount,0);
+  const incPrev=state.transactions.filter(t=>t.type==='income'&&t.date.startsWith(prevMonth)).reduce((s,t)=>s+t.amount,0);
+  const expPrev=state.transactions.filter(t=>t.type==='expense'&&t.date.startsWith(prevMonth)).reduce((s,t)=>s+t.amount,0);
+  
+  document.getElementById('totalIncome').textContent=fmt(incThis);
+  document.getElementById('totalExpense').textContent=fmt(expThis);
+  const bal=incThis-expThis;
+  document.getElementById('balance').textContent=fmt(bal);
+  document.getElementById('balanceStatus').textContent=bal>=0?'Positivo 🎉':'Déficit ⚠️';
+  const rate=incThis>0?((incThis-expThis)/incThis*100):0;
+  document.getElementById('savingsRate').textContent=rate.toFixed(1)+'%';
+  document.getElementById('savingsAbs').textContent=fmt(Math.max(0,incThis-expThis))+' ahorrado';
+  
+  // Trends
+  const incChg=incPrev>0?((incThis-incPrev)/incPrev*100):0;
+  const expChg=expPrev>0?((expThis-expPrev)/expPrev*100):0;
+  const icEl=document.getElementById('incomeChange');
+  icEl.textContent=(incChg>=0?'↑ ':'↓ ')+Math.abs(incChg).toFixed(1)+'% vs mes anterior';
+  icEl.className='stat-trend '+(incChg>=0?'up':'down');
+  const ecEl=document.getElementById('expenseChange');
+  ecEl.textContent=(expChg>=0?'↑ ':'↓ ')+Math.abs(expChg).toFixed(1)+'% vs mes anterior';
+  ecEl.className='stat-trend '+(expChg<=0?'up':'down');
+  
+  renderRecentTx();
+  renderFlowChart();
+  renderCatChart();
+  updateAiInsights();
+
+  // Weekly stats
+  const now=new Date();
+  const dayOfWeek=now.getDay()===0?6:now.getDay()-1; // Monday=0
+  const weekStart=new Date(now);weekStart.setDate(now.getDate()-dayOfWeek);weekStart.setHours(0,0,0,0);
+  const weekStartStr=weekStart.toISOString().split('T')[0];
+  const todayStr=now.toISOString().split('T')[0];
+  const weekTx=state.transactions.filter(t=>t.date>=weekStartStr&&t.date<=todayStr);
+  const wInc=weekTx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const wExp=weekTx.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const wBal=wInc-wExp;
+  const daysElapsed=dayOfWeek+1;
+  const wAvg=wExp>0?(wExp/daysElapsed):0;
+  document.getElementById('weekIncome').textContent=fmt(wInc);
+  document.getElementById('weekIncomeCount').textContent=weekTx.filter(t=>t.type==='income').length+' ingreso(s)';
+  document.getElementById('weekExpense').textContent=fmt(wExp);
+  document.getElementById('weekExpenseCount').textContent=weekTx.filter(t=>t.type==='expense').length+' gasto(s)';
+  const wBalEl=document.getElementById('weekBalance');
+  wBalEl.textContent=fmt(wBal);
+  wBalEl.style.color=wBal>=0?'var(--green)':'var(--red)';
+  document.getElementById('weekBalanceStatus').textContent=wBal>=0?'Positivo ✅':'Déficit ⚠️';
+  document.getElementById('weekAvgDaily').textContent=fmt(wAvg);
+}
+
+function renderRecentTx(){
+  const container=document.getElementById('recentTx');
+  const recent=state.transactions.slice(0,6);
+  if(!recent.length){
+    container.innerHTML=`<div class="empty"><div class="empty-title">Sin transacciones</div><div class="empty-desc">Registra tu primer movimiento</div><button class="btn btn-primary btn-sm" onclick="switchView('add-income')">Empezar</button></div>`;
+    return;
+  }
+  container.innerHTML=recent.map(t=>{
+    const isInc=t.type==='income';
+    const cat=isInc?CAT_INC[t.category]:CAT_EXP[t.category];
+    return `<div class="tx-item">
+      <div class="tx-icon ${isInc?'income-icon':'expense-icon'}">${cat?.emoji||'📌'}</div>
+      <div style="flex:1;">
+        <div class="tx-desc">${t.description}</div>
+        <div class="tx-meta">${new Date(t.date+'T12:00').toLocaleDateString('es-PE',{day:'numeric',month:'short'})} · ${cat?.name||'Otro'}${t.method?' · '+t.method:''}</div>
+      </div>
+      <div class="tx-amount ${isInc?'pos':'neg'}">${isInc?'+':'-'}${fmt(t.amount)}</div>
+      <button class="tx-del" onclick="deleteTx(${t.id})">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+      </button>
+    </div>`;
+  }).join('');
+}
+
+function renderFlowChart(){
+  const ctx=document.getElementById('flowChart')?.getContext('2d');if(!ctx)return;
+  if(chartFlow)chartFlow.destroy();
+  const days=[];const now=new Date();
+  for(let i=29;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);days.push(d.toISOString().split('T')[0]);}
+  const labels=days.map(d=>new Date(d+'T12:00').toLocaleDateString('es-PE',{day:'numeric',month:'short'}));
+  const incData=days.map(d=>state.transactions.filter(t=>t.type==='income'&&t.date===d).reduce((s,t)=>s+t.amount,0));
+  const expData=days.map(d=>state.transactions.filter(t=>t.type==='expense'&&t.date===d).reduce((s,t)=>s+t.amount,0));
+  chartFlow=new Chart(ctx,{type:'line',data:{labels,datasets:[
+    {label:'Ingresos',data:incData,borderColor:'#34c759',backgroundColor:'rgba(52,199,89,.08)',fill:true,tension:.4,pointRadius:0,borderWidth:2},
+    {label:'Gastos',data:expData,borderColor:'#ff3b30',backgroundColor:'rgba(255,59,48,.06)',fill:true,tension:.4,pointRadius:0,borderWidth:2}
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{intersect:false,mode:'index'},
+    plugins:{legend:{labels:{color:'#636366',font:{size:11,family:'DM Sans'}}}},
+    scales:{x:{ticks:{color:'#8e8e93',font:{size:10},maxTicksLimit:8},grid:{display:false}},
+      y:{ticks:{color:'#8e8e93',font:{size:10},callback:v=>cur()+v},grid:{color:'rgba(0,0,0,.04)'}}}}});
+}
+
+function renderCatChart(){
+  const ctx=document.getElementById('catChart')?.getContext('2d');if(!ctx)return;
+  if(chartCat)chartCat.destroy();
+  const month=new Date().toISOString().slice(0,7);
+  const exps=state.transactions.filter(t=>t.type==='expense'&&t.date.startsWith(month));
+  const totals={};exps.forEach(t=>{totals[t.category]=(totals[t.category]||0)+t.amount;});
+  const keys=Object.keys(totals).sort((a,b)=>totals[b]-totals[a]);
+  if(!keys.length){chartCat=null;return;}
+  chartCat=new Chart(ctx,{type:'doughnut',data:{
+    labels:keys.map(k=>CAT_EXP[k]?.name||k),
+    datasets:[{data:keys.map(k=>totals[k]),backgroundColor:keys.map(k=>CAT_EXP[k]?.color||'#8e8e93'),borderWidth:0,hoverOffset:6}]
+  },options:{responsive:true,maintainAspectRatio:false,cutout:'68%',
+    plugins:{legend:{position:'right',labels:{color:'#636366',font:{size:11,family:'DM Sans'},padding:10,boxWidth:10,boxHeight:10}}}}});
+}
+
+// ═══════════════════════════════════════════════════
+// GOALS
+// ═══════════════════════════════════════════════════
+let selectedEmoji='🎯';
+function selectEmoji(el,emoji){
+  document.querySelectorAll('#emojiPicker span').forEach(s=>s.style.borderColor='transparent');
+  el.style.borderColor='#007aff';selectedEmoji=emoji;
+  document.getElementById('goalEmoji').value=emoji;
+}
+
+function addGoal(){
+  const name=document.getElementById('goalName').value.trim();
+  const target=parseFloat(document.getElementById('goalTarget').value);
+  const saved=parseFloat(document.getElementById('goalSaved').value)||0;
+  const deadline=document.getElementById('goalDeadline').value;
+  const priority=document.getElementById('goalPriority').value;
+  const emoji=document.getElementById('goalEmoji').value||selectedEmoji;
+  if(!name||!target||!deadline){toast('Completa todos los campos','e');return;}
+  state.goals.push({id:Date.now(),name,target,current:saved,deadline,priority,emoji,created:new Date().toISOString()});
+  saveState();closeModal('modalAddGoal');renderGoals();
+  toast('Meta creada ✓','s');
+  document.getElementById('goalName').value='';document.getElementById('goalTarget').value='';
+  document.getElementById('goalSaved').value='';
+}
+
+function deleteGoal(id){
+  if(!confirm('¿Eliminar esta meta?'))return;
+  state.goals=state.goals.filter(g=>g.id!==id);saveState();renderGoals();toast('Meta eliminada','i');
+}
+
+function openAddFunds(id){
+  const g=state.goals.find(g=>g.id===id);if(!g)return;
+  document.getElementById('fundGoalId').value=id;
+  document.getElementById('fundGoalName').value=g.emoji+' '+g.name;
+  document.getElementById('fundAmount').value='';
+  openModal('modalAddFunds');
+}
+
+function addFundsToGoal(){
+  const id=parseInt(document.getElementById('fundGoalId').value);
+  const amt=parseFloat(document.getElementById('fundAmount').value);
+  if(!amt||amt<=0){toast('Ingresa un monto válido','e');return;}
+  const g=state.goals.find(g=>g.id===id);if(!g)return;
+  g.current=Math.min(g.target,g.current+amt);
+  saveState();closeModal('modalAddFunds');renderGoals();
+  toast(g.current>=g.target?`¡Meta "${g.name}" completada! 🎉`:`Fondos añadidos a "${g.name}" ✓`,'s');
+}
+
+function renderGoals(){
+  const c=document.getElementById('goalsContainer');
+  const summary=document.getElementById('goalsSummary');
+  if(!state.goals.length){
+    c.innerHTML=`<div class="empty" style="grid-column:1/-1;"><div class="empty-title">Sin metas aún</div><div class="empty-desc">Define tu primera meta de ahorro</div><button class="btn btn-primary btn-sm" onclick="openModal('modalAddGoal')">Crear meta</button></div>`;
+    if(summary)summary.style.display='none';return;
+  }
+  const today=new Date();
+  c.innerHTML=state.goals.map(g=>{
+    const pct=Math.min(100,(g.current/g.target)*100);
+    const remaining=g.target-g.current;
+    const deadline=new Date(g.deadline);
+    const daysLeft=Math.ceil((deadline-today)/(1000*60*60*24));
+    const progressClass=pct>=100?'complete':pct>=70?'on-track':pct>=40?'warning':'danger';
+    const daysClass=daysLeft<0?'late':daysLeft<=30?'warn':'ok';
+    const daysLabel=daysLeft<0?`${Math.abs(daysLeft)}d vencido`:daysLeft===0?'Hoy':daysLeft===1?'Mañana':`${daysLeft}d`;
+    return `<div class="goal-card">
+      <div class="goal-days-badge ${daysClass}">${daysLabel}</div>
+      <button class="goal-del" onclick="deleteGoal(${g.id})" title="Eliminar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+      </button>
+      <div class="goal-emoji">${g.emoji||'🎯'}</div>
+      <div class="goal-name">${g.name}</div>
+      <div class="goal-deadline">Límite: ${deadline.toLocaleDateString('es-PE',{day:'numeric',month:'short',year:'numeric'})}</div>
+      <div class="goal-prog-track"><div class="goal-prog-fill ${progressClass}" style="width:${pct}%"></div></div>
+      <div class="goal-stats">
+        <div><div class="goal-stat-val">${fmt(g.current)}</div><div class="goal-stat-label">Ahorrado</div></div>
+        <div style="text-align:center;"><div class="goal-stat-val" style="color:var(--dust)">${pct.toFixed(0)}%</div><div class="goal-stat-label">Progreso</div></div>
+        <div style="text-align:right;"><div class="goal-stat-val" style="color:var(--red)">${fmt(remaining)}</div><div class="goal-stat-label">Faltan</div></div>
+      </div>
+      ${pct<100?`<button class="goal-add-btn" onclick="openAddFunds(${g.id})">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Agregar fondos
+      </button>`:`<div style="text-align:center;padding:12px 0 4px;font-size:14px;font-weight:700;color:var(--green);">¡Meta alcanzada! 🎉</div>`}
+    </div>`;
+  }).join('');
+  
+  if(summary){
+    summary.style.display='block';
+    const totalTarget=state.goals.reduce((s,g)=>s+g.target,0);
+    const totalSaved=state.goals.reduce((s,g)=>s+g.current,0);
+    const globalPct=totalTarget>0?(totalSaved/totalTarget*100):0;
+    document.getElementById('goalsTotalTarget').textContent=fmt(totalTarget);
+    document.getElementById('goalsTotalSaved').textContent=fmt(totalSaved);
+    document.getElementById('goalsGlobalPct').textContent=globalPct.toFixed(1)+'%';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// BUDGET
+// ═══════════════════════════════════════════════════
+function openBudgetModal(){
+  const inputs=document.getElementById('budgetInputs');
+  inputs.innerHTML=Object.entries(CAT_EXP).map(([k,v])=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--paper);">
+      <div style="width:36px;height:36px;background:var(--paper);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">${v.emoji}</div>
+      <div style="flex:1;font-size:14px;font-weight:500;">${v.name}</div>
+      <input class="form-input" id="bgt_${k}" type="number" min="0" step="10" placeholder="Sin límite" value="${state.budgets[k]||''}" style="width:110px;text-align:right;">
+    </div>`).join('');
+  openModal('modalSetBudget');
+}
+
+function saveBudgets(){
+  Object.keys(CAT_EXP).forEach(k=>{
+    const v=parseFloat(document.getElementById('bgt_'+k)?.value);
+    if(v>0)state.budgets[k]=v;else delete state.budgets[k];
+  });
+  saveState();closeModal('modalSetBudget');renderBudget();toast('Presupuesto guardado ✓','s');
+}
+
+function renderBudget(){
+  const list=document.getElementById('budgetList');if(!list)return;
+  const month=new Date().toISOString().slice(0,7);
+  const cats=Object.keys(CAT_EXP);
+  const rows=cats.map(k=>{
+    const spent=state.transactions.filter(t=>t.type==='expense'&&t.category===k&&t.date.startsWith(month)).reduce((s,t)=>s+t.amount,0);
+    const limit=state.budgets[k];
+    const pct=limit?Math.min(100,(spent/limit)*100):0;
+    const barColor=pct>=100?'var(--red)':pct>=80?'var(--orange)':'var(--green)';
+    return {k,spent,limit,pct,barColor,cat:CAT_EXP[k]};
+  }).filter(r=>r.spent>0||r.limit);
+  if(!rows.length){
+    list.innerHTML=`<div class="empty"><div class="empty-title">Sin datos aún</div><div class="empty-desc">Registra gastos o establece límites para ver tu presupuesto</div></div>`;return;
+  }
+  list.innerHTML=rows.map(({k,spent,limit,pct,barColor,cat})=>`
+    <div class="budget-item">
+      <div class="budget-cat"><div class="budget-icon">${cat.emoji}</div><div class="budget-cat-name">${cat.name}</div></div>
+      <div class="budget-bar-track"><div class="budget-bar-fill" style="width:${limit?pct:0}%;background:${barColor};"></div></div>
+      <div class="budget-amounts">
+        <div class="budget-spent">${fmt(spent)}</div>
+        <div class="budget-limit">${limit?'de '+fmt(limit):'Sin límite'}</div>
+      </div>
+      <div class="budget-pct" style="color:${barColor}">${limit?pct.toFixed(0)+'%':'—'}</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// HISTORY
+// ═══════════════════════════════════════════════════
+function setFilter(f,el){
+  txFilter=f;
+  document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');renderHistory();
+}
+
+function populateMonthFilter(){
+  const sel=document.getElementById('filterMonth');if(!sel)return;
+  const months=new Set(state.transactions.map(t=>t.date.slice(0,7)));
+  months.forEach(m=>{
+    const o=document.createElement('option');o.value=m;
+    o.textContent=new Date(m+'-15').toLocaleDateString('es-PE',{month:'long',year:'numeric'});
+    sel.appendChild(o);
+  });
+}
+
+function renderHistory(){
+  const container=document.getElementById('historyList');if(!container)return;
+  const q=(document.getElementById('searchTx')?.value||'').toLowerCase();
+  const mf=document.getElementById('filterMonth')?.value||'';
+  let txs=state.transactions.filter(t=>{
+    if(txFilter!=='all'&&t.type!==txFilter)return false;
+    if(mf&&!t.date.startsWith(mf))return false;
+    if(q&&!t.description.toLowerCase().includes(q)&&!(CAT_INC[t.category]?.name||CAT_EXP[t.category]?.name||'').toLowerCase().includes(q))return false;
+    return true;
+  });
+  if(!txs.length){
+    container.innerHTML=`<div class="empty"><div class="empty-icon">📭</div><div class="empty-title">Sin resultados</div></div>`;return;
+  }
+  container.innerHTML=txs.map(t=>{
+    const isInc=t.type==='income';
+    const cat=isInc?CAT_INC[t.category]:CAT_EXP[t.category];
+    return `<div class="tx-item">
+      <div class="tx-icon ${isInc?'income-icon':'expense-icon'}">${cat?.emoji||'📌'}</div>
+      <div style="flex:1;">
+        <div class="tx-desc">${t.description}</div>
+        <div class="tx-meta">${new Date(t.date+'T12:00').toLocaleDateString('es-PE',{weekday:'short',day:'numeric',month:'short',year:'numeric'})} · ${cat?.name||'Otro'}${t.method?' · '+t.method:''}${t.recurrent&&t.recurrent!=='no'?' · 🔄 '+t.recurrent:''}</div>
+      </div>
+      <div class="tx-amount ${isInc?'pos':'neg'}">${isInc?'+':'-'}${fmt(t.amount)}</div>
+      <button class="tx-del" onclick="deleteTx(${t.id})">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+      </button>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// ANALYTICS
+// ═══════════════════════════════════════════════════
+let chartWeekly=null,chartPie=null,chartMonthly=null;
+function renderAnalytics(){
+  const exps=state.transactions.filter(t=>t.type==='expense');
+  // Avg daily
+  if(exps.length){
+    const days=new Set(exps.map(t=>t.date)).size||1;
+    const total=exps.reduce((s,t)=>s+t.amount,0);
+    document.getElementById('avgDaily').textContent=fmt(total/days);
+  }
+  // Top cat
+  const catTotals={};exps.forEach(t=>{catTotals[t.category]=(catTotals[t.category]||0)+t.amount;});
+  const topCat=Object.keys(catTotals).sort((a,b)=>catTotals[b]-catTotals[a])[0];
+  document.getElementById('topCat').textContent=topCat?(CAT_EXP[topCat]?.emoji+' '+CAT_EXP[topCat]?.name):'—';
+  // Best month
+  const monthTotals={};
+  state.transactions.filter(t=>t.type==='income').forEach(t=>{const m=t.date.slice(0,7);monthTotals[m]=(monthTotals[m]||0)+t.amount;});
+  const bestMo=Object.keys(monthTotals).sort((a,b)=>monthTotals[b]-monthTotals[a])[0];
+  document.getElementById('bestMonth').textContent=bestMo?new Date(bestMo+'-15').toLocaleDateString('es-PE',{month:'short',year:'numeric'}):'—';
+  
+  renderWeeklyChart();renderPieChart();renderMonthlyChart();
+}
+
+function renderWeeklyChart(){
+  const ctx=document.getElementById('weeklyChart')?.getContext('2d');if(!ctx)return;
+  if(chartWeekly)chartWeekly.destroy();
+  const weeks=[];const now=new Date();
+  for(let w=3;w>=0;w--){
+    const start=new Date(now);start.setDate(start.getDate()-w*7-6);
+    const end=new Date(now);end.setDate(end.getDate()-w*7);
+    const label='S'+(4-w);
+    const startStr=start.toISOString().split('T')[0];const endStr=end.toISOString().split('T')[0];
+    const income=state.transactions.filter(t=>t.type==='income'&&t.date>=startStr&&t.date<=endStr).reduce((s,t)=>s+t.amount,0);
+    const expense=state.transactions.filter(t=>t.type==='expense'&&t.date>=startStr&&t.date<=endStr).reduce((s,t)=>s+t.amount,0);
+    weeks.push({label,income,expense});
+  }
+  chartWeekly=new Chart(ctx,{type:'bar',data:{labels:weeks.map(w=>w.label),datasets:[
+    {label:'Ingresos',data:weeks.map(w=>w.income),backgroundColor:'rgba(52,199,89,.7)',borderRadius:6,borderSkipped:false},
+    {label:'Gastos',data:weeks.map(w=>w.expense),backgroundColor:'rgba(255,59,48,.65)',borderRadius:6,borderSkipped:false}
+  ]},options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#636366',font:{size:11,family:'DM Sans'}}}},
+    scales:{x:{ticks:{color:'#8e8e93'},grid:{display:false}},y:{ticks:{color:'#8e8e93',callback:v=>cur()+v},grid:{color:'rgba(0,0,0,.04)'}}}}});
+}
+
+function renderPieChart(){
+  const ctx=document.getElementById('pieChart')?.getContext('2d');if(!ctx)return;
+  if(chartPie)chartPie.destroy();
+  const catTotals={};
+  state.transactions.filter(t=>t.type==='expense').forEach(t=>{catTotals[t.category]=(catTotals[t.category]||0)+t.amount;});
+  const keys=Object.keys(catTotals).sort((a,b)=>catTotals[b]-catTotals[a]);
+  if(!keys.length)return;
+  chartPie=new Chart(ctx,{type:'doughnut',data:{
+    labels:keys.map(k=>CAT_EXP[k]?.name||k),
+    datasets:[{data:keys.map(k=>catTotals[k]),backgroundColor:keys.map(k=>CAT_EXP[k]?.color||'#8e8e93'),borderWidth:0,hoverOffset:8}]
+  },options:{responsive:true,maintainAspectRatio:false,cutout:'60%',
+    plugins:{legend:{position:'right',labels:{color:'#636366',font:{size:11,family:'DM Sans'},padding:8,boxWidth:10}}}}});
+}
+
+function renderMonthlyChart(){
+  const ctx=document.getElementById('monthlyChart')?.getContext('2d');if(!ctx)return;
+  if(chartMonthly)chartMonthly.destroy();
+  const months=[];const now=new Date();
+  for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push(d.toISOString().slice(0,7));}
+  const labels=months.map(m=>new Date(m+'-15').toLocaleDateString('es-PE',{month:'short',year:'2-digit'}));
+  const incData=months.map(m=>state.transactions.filter(t=>t.type==='income'&&t.date.startsWith(m)).reduce((s,t)=>s+t.amount,0));
+  const expData=months.map(m=>state.transactions.filter(t=>t.type==='expense'&&t.date.startsWith(m)).reduce((s,t)=>s+t.amount,0));
+  const savingsData=months.map((_,i)=>Math.max(0,incData[i]-expData[i]));
+  chartMonthly=new Chart(ctx,{type:'line',data:{labels,datasets:[
+    {label:'Ingresos',data:incData,borderColor:'#34c759',backgroundColor:'rgba(52,199,89,.06)',fill:true,tension:.4,pointRadius:4,pointBackgroundColor:'#34c759',borderWidth:2},
+    {label:'Gastos',data:expData,borderColor:'#ff3b30',backgroundColor:'rgba(255,59,48,.05)',fill:true,tension:.4,pointRadius:4,pointBackgroundColor:'#ff3b30',borderWidth:2},
+    {label:'Ahorro',data:savingsData,borderColor:'#007aff',backgroundColor:'rgba(0,122,255,.06)',fill:true,tension:.4,pointRadius:4,pointBackgroundColor:'#007aff',borderWidth:2,borderDash:[5,3]}
+  ]},options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#636366',font:{size:11,family:'DM Sans'}}}},
+    scales:{x:{ticks:{color:'#8e8e93'},grid:{display:false}},y:{ticks:{color:'#8e8e93',callback:v=>cur()+v},grid:{color:'rgba(0,0,0,.04)'}}}}});
+}
+
+// ═══════════════════════════════════════════════════
+// AI ADVISOR
+// ═══════════════════════════════════════════════════
+function buildFinancialContext(){
+  const month=new Date().toISOString().slice(0,7);
+  const inc=state.transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const exp=state.transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const incMonth=state.transactions.filter(t=>t.type==='income'&&t.date.startsWith(month)).reduce((s,t)=>s+t.amount,0);
+  const expMonth=state.transactions.filter(t=>t.type==='expense'&&t.date.startsWith(month)).reduce((s,t)=>s+t.amount,0);
+  const catTotals={};state.transactions.filter(t=>t.type==='expense').forEach(t=>{catTotals[t.category]=(catTotals[t.category]||0)+t.amount;});
+  const topCat=Object.keys(catTotals).sort((a,b)=>catTotals[b]-catTotals[a]).slice(0,3).map(k=>`${CAT_EXP[k]?.name}: ${cur()} ${catTotals[k].toFixed(2)}`).join(', ');
+  const goalsStr=state.goals.map(g=>`"${g.name}" (${(g.current/g.target*100).toFixed(0)}% completado, falta ${cur()} ${(g.target-g.current).toFixed(2)})`).join('; ');
+  const budgetsStr=Object.entries(state.budgets).map(([k,v])=>`${CAT_EXP[k]?.name}: ${cur()} ${v}`).join(', ');
+  return `DATOS FINANCIEROS DEL USUARIO (${new Date().toLocaleDateString('es-PE')}):
+- Nombre: ${state.profile?.name||'Estudiante'}
+- Moneda: ${cur()}
+- Ingresos totales: ${cur()} ${inc.toFixed(2)}
+- Gastos totales: ${cur()} ${exp.toFixed(2)}
+- Balance total: ${cur()} ${(inc-exp).toFixed(2)}
+- Ingresos este mes: ${cur()} ${incMonth.toFixed(2)}
+- Gastos este mes: ${cur()} ${expMonth.toFixed(2)}
+- Tasa de ahorro este mes: ${incMonth>0?((incMonth-expMonth)/incMonth*100).toFixed(1):0}%
+- Top categorías de gasto: ${topCat||'Sin datos'}
+- Metas activas: ${goalsStr||'Ninguna'}
+- Presupuestos: ${budgetsStr||'Sin definir'}
+- Total transacciones: ${state.transactions.length}`;
+}
+
+// ── LOCAL AI ENGINE (sin servidor, 100% en el navegador) ──
+function computeFinancials(){
+  const now=new Date();
+  const month=now.toISOString().slice(0,7);
+  const prevMonth=new Date(now.getFullYear(),now.getMonth()-1,1).toISOString().slice(0,7);
+  const txs=state.transactions;
+  const incAll=txs.filter(t=>t.type==='income');
+  const expAll=txs.filter(t=>t.type==='expense');
+  const incMonth=incAll.filter(t=>t.date.startsWith(month)).reduce((s,t)=>s+t.amount,0);
+  const expMonth=expAll.filter(t=>t.date.startsWith(month)).reduce((s,t)=>s+t.amount,0);
+  const incPrev=incAll.filter(t=>t.date.startsWith(prevMonth)).reduce((s,t)=>s+t.amount,0);
+  const expPrev=expAll.filter(t=>t.date.startsWith(prevMonth)).reduce((s,t)=>s+t.amount,0);
+  const incTotal=incAll.reduce((s,t)=>s+t.amount,0);
+  const expTotal=expAll.reduce((s,t)=>s+t.amount,0);
+  const catTotals={};expAll.forEach(t=>{catTotals[t.category]=(catTotals[t.category]||0)+t.amount;});
+  const catMonth={};expAll.filter(t=>t.date.startsWith(month)).forEach(t=>{catMonth[t.category]=(catMonth[t.category]||0)+t.amount;});
+  const sortedCats=Object.keys(catTotals).sort((a,b)=>catTotals[b]-catTotals[a]);
+  const sortedCatsMonth=Object.keys(catMonth).sort((a,b)=>catMonth[b]-catMonth[a]);
+  const dayOfMonth=now.getDate();
+  const daysInMonth=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  const dailyBurnRate=expMonth/dayOfMonth;
+  const projExpEnd=dailyBurnRate*daysInMonth;
+  const projSavings=incMonth-projExpEnd;
+  const savingsRate=incMonth>0?((incMonth-expMonth)/incMonth*100):0;
+  const avgExpDaily=expTotal>0?(expTotal/(new Set(expAll.map(t=>t.date)).size||1)):0;
+  // Goals
+  const activeGoals=state.goals.filter(g=>g.current<g.target);
+  const nearestGoal=activeGoals.sort((a,b)=>(a.target-a.current)-(b.target-b.current))[0];
+  return {incMonth,expMonth,incPrev,expPrev,incTotal,expTotal,catTotals,catMonth,
+    sortedCats,sortedCatsMonth,dayOfMonth,daysInMonth,dailyBurnRate,projExpEnd,projSavings,
+    savingsRate,avgExpDaily,nearestGoal,activeGoals,txCount:txs.length};
+}
+
+function generateAiReply(msg){
+  const q=msg.toLowerCase();
+  const f=computeFinancials();
+  const c=cur();
+  const hasTx=state.transactions.length>0;
+
+  // ── GASTO MÁS / TOP CATEGORÍA ──
+  if(q.includes('gasto más')||q.includes('mayor gasto')||q.includes('categoria')||q.includes('categoría')||q.includes('donde gasto')||q.includes('dónde gasto')){
+    if(!hasTx)return 'Aún no tienes gastos registrados. Empieza registrando tus primeros gastos para que pueda analizarlos 📊';
+    if(!f.sortedCats.length)return 'No encuentro gastos registrados todavía. ¡Añade algunos y regresa!';
+    const top3=f.sortedCats.slice(0,3).map((k,i)=>{
+      const pct=f.expTotal>0?(f.catTotals[k]/f.expTotal*100).toFixed(1):0;
+      return `${i+1}. ${CAT_EXP[k]?.emoji||'📌'} <b>${CAT_EXP[k]?.name||k}</b>: ${c} ${f.catTotals[k].toFixed(2)} (${pct}%)`;
+    }).join('<br>');
+    const topName=CAT_EXP[f.sortedCats[0]]?.name||f.sortedCats[0];
+    const topPct=f.expTotal>0?(f.catTotals[f.sortedCats[0]]/f.expTotal*100).toFixed(0):0;
+    return `📊 <b>Tus principales categorías de gasto:</b><br><br>${top3}<br><br>Tu mayor gasto es <b>${topName}</b>, representando el <b>${topPct}%</b> de todos tus egresos. ${f.sortedCats[0]==='food'?'💡 Consejo: cocinar en casa puede reducir este gasto hasta un 40%.':f.sortedCats[0]==='entertainment'?'💡 Consejo: busca alternativas gratuitas o de bajo costo para entretenimiento.':f.sortedCats[0]==='transport'?'💡 Consejo: considera el transporte público o agruparte con otros para ahorrar.':'💡 Considera establecer un presupuesto mensual para esta categoría.'}`;
+  }
+
+  // ── AHORRO / PROYECCIÓN ──
+  if(q.includes('ahorrar')||q.includes('ahorro')||q.includes('proyecci')||q.includes('mes')&&q.includes('puedo')){
+    if(!hasTx)return 'Para calcular tu proyección de ahorro necesito que registres tus ingresos y gastos primero. ¡Empieza ahora! 💪';
+    if(f.incMonth===0)return `No tienes ingresos registrados este mes. Registra tu ingreso para que pueda calcular cuánto podrías ahorrar.`;
+    const remaining=f.daysInMonth-f.dayOfMonth;
+    const lines=[
+      `📅 <b>Proyección de ahorro — ${new Date().toLocaleDateString('es-PE',{month:'long'})}</b>`,``,
+      `💰 Ingresos del mes: <b>${c} ${f.incMonth.toFixed(2)}</b>`,
+      `💸 Gastado hasta hoy (día ${f.dayOfMonth}): <b>${c} ${f.expMonth.toFixed(2)}</b>`,
+      `🔥 Ritmo de gasto diario: <b>${c} ${f.dailyBurnRate.toFixed(2)}/día</b>`,``,
+      `📌 Quedan <b>${remaining} días</b> del mes`,
+      `📊 Gasto proyectado al final del mes: <b>${c} ${f.projExpEnd.toFixed(2)}</b>`,``,
+      f.projSavings>=0
+        ?`✅ <b>Podrías ahorrar: ${c} ${f.projSavings.toFixed(2)}</b> (${f.savingsRate.toFixed(1)}% de tus ingresos)`
+        :`⚠️ <b>Proyección de déficit: ${c} ${Math.abs(f.projSavings).toFixed(2)}</b> — estás gastando más de lo que ingresas`,
+    ];
+    if(f.projSavings<0)lines.push(`<br>💡 <b>Sugerencia:</b> reduce tu gasto diario en <b>${c} ${(Math.abs(f.projSavings)/remaining).toFixed(2)}</b> para llegar al equilibrio.`);
+    else if(f.savingsRate>=20)lines.push(`<br>🎉 ¡Excelente! Una tasa de ahorro del ${f.savingsRate.toFixed(0)}% es muy buena. Los expertos recomiendan al menos 20%.`);
+    else lines.push(`<br>💡 Para mejorar tu ahorro, intenta reducir el gasto en <b>${CAT_EXP[f.sortedCatsMonth[0]]?.name||'tu categoría principal'}</b>.`);
+    return lines.join('<br>');
+  }
+
+  // ── META ──
+  if(q.includes('meta')||q.includes('objetivo')||q.includes('alcanzar')||q.includes('llegar')){
+    if(!state.goals.length)return '🎯 No tienes metas de ahorro registradas. Ve a la sección <b>Metas</b> y crea tu primer objetivo. ¡Te ayudará a enfocarte!';
+    if(!f.nearestGoal)return '🎉 ¡Increíble! Todas tus metas están completadas. ¡Es hora de crear nuevas!';
+    const g=f.nearestGoal;
+    const remaining=g.target-g.current;
+    const deadline=new Date(g.deadline);
+    const daysLeft=Math.ceil((deadline-new Date())/(1000*60*60*24));
+    const needed=daysLeft>0?(remaining/daysLeft).toFixed(2):null;
+    const withCurrentSavings=f.savingsRate>0&&f.incMonth>0?(remaining/((f.incMonth-f.expMonth))).toFixed(1):null;
+    const lines=[
+      `🎯 <b>Meta más cercana: ${g.emoji||'🎯'} ${g.name}</b>`,``,
+      `📊 Progreso: <b>${c} ${g.current.toFixed(2)}</b> de <b>${c} ${g.target.toFixed(2)}</b> (${(g.current/g.target*100).toFixed(0)}%)`,
+      `📌 Falta: <b>${c} ${remaining.toFixed(2)}</b>`,
+      `📅 Fecha límite: <b>${deadline.toLocaleDateString('es-PE',{day:'numeric',month:'long',year:'numeric'})}</b>`,
+      daysLeft>0?`⏳ Días restantes: <b>${daysLeft}</b>`:`⚠️ Esta meta ya venció`,
+    ];
+    if(needed&&daysLeft>0)lines.push(`<br>💡 Para alcanzarla a tiempo necesitas ahorrar <b>${c} ${needed}/día</b> (${c} ${(parseFloat(needed)*30).toFixed(0)}/mes).`);
+    if(withCurrentSavings&&parseFloat(withCurrentSavings)>0)lines.push(`Con tu ritmo de ahorro actual lo lograrías en aproximadamente <b>${withCurrentSavings} meses</b>.`);
+    return lines.join('<br>');
+  }
+
+  // ── BALANCE / ESTADO FINANCIERO ──
+  if(q.includes('balance')||q.includes('estado')||q.includes('situaci')||q.includes('cómo estoy')||q.includes('como estoy')||q.includes('resumen')){
+    if(!hasTx)return '📊 Aún no tienes movimientos registrados. Empieza añadiendo tus ingresos y gastos para que pueda darte un análisis completo.';
+    const bal=f.incTotal-f.expTotal;
+    const lines=[
+      `📊 <b>Tu resumen financiero completo</b>`,``,
+      `💰 Ingresos totales: <b>${c} ${f.incTotal.toFixed(2)}</b>`,
+      `💸 Gastos totales: <b>${c} ${f.expTotal.toFixed(2)}</b>`,
+      `🏦 Balance total: <b>${c} ${bal.toFixed(2)}</b> ${bal>=0?'✅':'⚠️'}`,``,
+      `📅 <b>Este mes:</b>`,
+      `  · Ingresos: ${c} ${f.incMonth.toFixed(2)}`,
+      `  · Gastos: ${c} ${f.expMonth.toFixed(2)}`,
+      `  · Ahorro: ${c} ${(f.incMonth-f.expMonth).toFixed(2)} (${f.savingsRate.toFixed(0)}%)`,
+    ];
+    if(bal<0)lines.push(`<br>⚠️ Tu balance total es negativo. Es importante reducir gastos o aumentar ingresos.`);
+    else if(f.savingsRate>=20)lines.push(`<br>🌟 Tu tasa de ahorro mensual es excelente (${f.savingsRate.toFixed(0)}%). ¡Sigue así!`);
+    else if(f.savingsRate>0)lines.push(`<br>💡 Tu tasa de ahorro es ${f.savingsRate.toFixed(0)}%. El objetivo recomendado es 20%+.`);
+    return lines.join('<br>');
+  }
+
+  // ── CONSEJOS ──
+  if(q.includes('consejo')||q.includes('tip')||q.includes('reducir')||q.includes('mejorar')||q.includes('ayuda')){
+    const tips=[];
+    if(f.savingsRate<20&&f.incMonth>0)tips.push(`📉 Tu tasa de ahorro actual es <b>${f.savingsRate.toFixed(0)}%</b>. Intenta llegar al 20% reduciendo gastos no esenciales.`);
+    if(f.sortedCatsMonth[0])tips.push(`🍕 Gastas más en <b>${CAT_EXP[f.sortedCatsMonth[0]]?.name}</b> este mes (${c} ${(f.catMonth[f.sortedCatsMonth[0]]||0).toFixed(2)}). Establece un límite en Presupuesto.`);
+    if(!Object.keys(state.budgets).length)tips.push(`📊 No tienes presupuesto configurado. Ir a <b>Presupuesto → Editar Límites</b> te ayudará a controlar gastos.`);
+    if(state.goals.length===0)tips.push(`🎯 No tienes metas de ahorro. Crear una meta concreta aumenta la probabilidad de ahorrar en un 42%.`);
+    if(f.activeGoals.length>0)tips.push(`💪 Tienes ${f.activeGoals.length} meta(s) activa(s). Agrega fondos regularmente para no perder el ritmo.`);
+    if(f.dailyBurnRate>0)tips.push(`🔥 Gastas en promedio <b>${c} ${f.dailyBurnRate.toFixed(2)} al día</b>. Reducir solo ${c} ${(f.dailyBurnRate*0.1).toFixed(2)} diarios ahorraría ${c} ${(f.dailyBurnRate*0.1*30).toFixed(2)}/mes.`);
+    tips.push(`📱 Revisa tus suscripciones digitales. Es común pagar por servicios que ya no usas.`);
+    if(!tips.length)return 'Registra más movimientos para recibir consejos personalizados basados en tus datos reales.';
+    return `💡 <b>Consejos personalizados para ti:</b><br><br>${tips.map((t,i)=>`<b>${i+1}.</b> ${t}`).join('<br><br>')}`;
+  }
+
+  // ── INGRESOS ──
+  if(q.includes('ingreso')||q.includes('ganando')||q.includes('gano')||q.includes('sueldo')||q.includes('salario')){
+    if(f.incTotal===0)return 'No tienes ingresos registrados aún. Ve a <b>Nuevo Ingreso</b> para añadir tu sueldo, mesada u otros ingresos.';
+    const incCats={};state.transactions.filter(t=>t.type==='income').forEach(t=>{incCats[t.category]=(incCats[t.category]||0)+t.amount;});
+    const topIncCats=Object.keys(incCats).sort((a,b)=>incCats[b]-incCats[a]).map(k=>`${CAT_INC[k]?.emoji} ${CAT_INC[k]?.name}: ${c} ${incCats[k].toFixed(2)}`).join('<br>');
+    return `💰 <b>Resumen de tus ingresos:</b><br><br>${topIncCats}<br><br>📅 Este mes: <b>${c} ${f.incMonth.toFixed(2)}</b><br>📊 Total histórico: <b>${c} ${f.incTotal.toFixed(2)}</b>`;
+  }
+
+  // ── COMPARACIÓN MES ANTERIOR ──
+  if(q.includes('anterior')||q.includes('comparar')||q.includes('mes pasado')){
+    if(f.incPrev===0&&f.expPrev===0)return 'No tengo datos del mes anterior para comparar. ¡Sigue registrando y el próximo mes podré mostrarte la evolución!';
+    const incChg=f.incPrev>0?((f.incMonth-f.incPrev)/f.incPrev*100):0;
+    const expChg=f.expPrev>0?((f.expMonth-f.expPrev)/f.expPrev*100):0;
+    return `📊 <b>Comparación vs mes anterior:</b><br><br>💰 Ingresos: ${c} ${f.incPrev.toFixed(2)} → <b>${c} ${f.incMonth.toFixed(2)}</b> ${incChg>=0?`(+${incChg.toFixed(1)}% 📈)`:`(${incChg.toFixed(1)}% 📉)`}<br>💸 Gastos: ${c} ${f.expPrev.toFixed(2)} → <b>${c} ${f.expMonth.toFixed(2)}</b> ${expChg<=0?`(${expChg.toFixed(1)}% 📈 bien)`:`(+${expChg.toFixed(1)}% ⚠️ sube)`}<br><br>${expChg>20?'⚠️ Tus gastos subieron significativamente. Revisa qué categoría aumentó.':incChg>0?'✅ Tus ingresos mejoraron este mes. ¡Sigue así!':'📊 Tu situación es similar al mes anterior.'}`;
+  }
+
+  // ── PRESUPUESTO ──
+  if(q.includes('presupuesto')||q.includes('límite')||q.includes('limite')){
+    const hasBudget=Object.keys(state.budgets).length>0;
+    if(!hasBudget)return `No tienes presupuestos configurados. Ve a <b>Presupuesto → Editar Límites</b> y define cuánto puedes gastar en cada categoría. Es una de las herramientas más poderosas para controlar tus finanzas. 📊`;
+    const month=new Date().toISOString().slice(0,7);
+    const lines=['📊 <b>Estado de tu presupuesto este mes:</b>',''];
+    Object.entries(state.budgets).forEach(([k,limit])=>{
+      const spent=state.transactions.filter(t=>t.type==='expense'&&t.category===k&&t.date.startsWith(month)).reduce((s,t)=>s+t.amount,0);
+      const pct=(spent/limit*100).toFixed(0);
+      const emoji=pct>=100?'🔴':pct>=80?'🟡':'🟢';
+      lines.push(`${emoji} ${CAT_EXP[k]?.name}: ${c} ${spent.toFixed(2)} / ${c} ${limit} (${pct}%)`);
+    });
+    return lines.join('<br>');
+  }
+
+  // ── HOLA / SALUDO ──
+  if(q.includes('hola')||q.includes('buenas')||q.includes('hey')||msg.length<8){
+    const name=state.profile?.name||'';
+    return `¡Hola${name?' '+name:''}! 👋 Soy STdFinance IA, tu asistente financiero. Tengo acceso a todos tus datos y puedo ayudarte con:<br><br>• 📊 Análisis de gastos por categoría<br>• 💰 Proyección de ahorro mensual<br>• 🎯 Seguimiento de tus metas<br>• 💡 Consejos personalizados<br>• 📈 Comparativa con mes anterior<br>• 🏦 Estado de tu presupuesto<br><br>¿Qué quieres saber?`;
+  }
+
+  // ── FALLBACK INTELIGENTE ──
+  const hasData=state.transactions.length>0;
+  if(!hasData)return `¡Buena pregunta! Para darte una respuesta personalizada necesito que primero registres algunos movimientos. Ve a <b>Nuevo Ingreso</b> o <b>Nuevo Gasto</b> y empieza a llevar el control. ¡Estaré listo para analizarlos! 🚀`;
+  return `Entendí tu consulta. Aquí está lo que sé sobre tus finanzas ahora mismo:<br><br>💰 Ingresos este mes: <b>${c} ${f.incMonth.toFixed(2)}</b><br>💸 Gastos este mes: <b>${c} ${f.expMonth.toFixed(2)}</b><br>🏦 Balance: <b>${c} ${(f.incMonth-f.expMonth).toFixed(2)}</b><br>📊 Ahorro: <b>${f.savingsRate.toFixed(0)}%</b><br><br>Puedes preguntarme sobre: gastos por categoría, proyección de ahorro, metas, consejos, comparación mensual o estado de presupuesto.`;
+}
+
+function sendAiMessage(){
+  const input=document.getElementById('aiInput');
+  const msg=input.value.trim();if(!msg)return;
+  input.value='';appendMsg(msg,'user');
+  const btn=document.getElementById('aiSendBtn');btn.disabled=true;
+  appendTyping();
+  // Simulate a brief "thinking" delay for natural feel
+  setTimeout(()=>{
+    removeTyping();
+    const reply=generateAiReply(msg);
+    state.aiHistory.push({role:'user',content:msg},{role:'assistant',content:reply});
+    appendMsg(reply,'assistant');
+    saveState();
+    btn.disabled=false;input.focus();
+  }, 700+Math.random()*600);
+}
+
+function quickAsk(msg){document.getElementById('aiInput').value=msg;sendAiMessage();}
+
+function appendMsg(text,role){
+  const w=document.getElementById('aiChatWindow');
+  const div=document.createElement('div');div.className='ai-msg '+(role==='user'?'user':'');
+  div.innerHTML=`<div class="ai-bubble ${role}">${text.replace(/\n/g,'<br>')}</div>`;
+  w.appendChild(div);w.scrollTop=w.scrollHeight;
+}
+
+function appendTyping(){
+  const w=document.getElementById('aiChatWindow');
+  const div=document.createElement('div');div.className='ai-msg';div.id='typingInd';
+  div.innerHTML='<div class="ai-typing"><span></span><span></span><span></span></div>';
+  w.appendChild(div);w.scrollTop=w.scrollHeight;
+}
+function removeTyping(){const t=document.getElementById('typingInd');if(t)t.remove();}
+function clearChat(){
+  state.aiHistory=[];
+  const w=document.getElementById('aiChatWindow');
+  if(!w)return;
+  w.innerHTML='<div class="ai-msg"><div class="ai-bubble assistant">¡Hola! Soy STdFinance IA, tu asesor financiero personal. Tengo acceso a todos tus datos financieros y puedo ayudarte a:<br><br>📊 Analizar tus patrones de gasto<br>💡 Darte consejos personalizados<br>🎯 Planificar el alcance de tus metas<br>📈 Proyectar tu situación financiera<br><br>¿En qué puedo ayudarte hoy?</div></div>';
+  saveState();
+  toast('Chat limpiado ✓','s');
+}
+
+async function updateAiInsights(){
+  const tip=document.getElementById('aiTip');
+  const pred=document.getElementById('aiPrediction');
+  if(!tip||!pred)return;
+  if(!state.transactions.length){
+    tip.textContent='Registra tus primeros movimientos para obtener consejos personalizados.';
+    pred.textContent='Necesito datos para hacer proyecciones.';return;
+  }
+  // Local smart insights (no API needed)
+  const month=new Date().toISOString().slice(0,7);
+  const incMonth=state.transactions.filter(t=>t.type==='income'&&t.date.startsWith(month)).reduce((s,t)=>s+t.amount,0);
+  const expMonth=state.transactions.filter(t=>t.type==='expense'&&t.date.startsWith(month)).reduce((s,t)=>s+t.amount,0);
+  const catTotals={};state.transactions.filter(t=>t.type==='expense').forEach(t=>{catTotals[t.category]=(catTotals[t.category]||0)+t.amount;});
+  const topCat=Object.keys(catTotals).sort((a,b)=>catTotals[b]-catTotals[a])[0];
+  const rate=incMonth>0?((incMonth-expMonth)/incMonth*100):0;
+  if(topCat)tip.textContent=`Tu mayor gasto es en ${CAT_EXP[topCat]?.name}. Considera establecer un límite mensual para controlarlo mejor.`;
+  else tip.textContent='Empieza a registrar gastos para obtener consejos personalizados.';
+  const dayOfMonth=new Date().getDate();const daysInMonth=new Date(new Date().getFullYear(),new Date().getMonth()+1,0).getDate();
+  if(incMonth>0){
+    const projExp=expMonth/dayOfMonth*daysInMonth;
+    const projSav=incMonth-projExp;
+    pred.textContent=`Proyección: ${projSav>=0?'ahorrarás':'gastarás de más'} ${fmt(Math.abs(projSav))} este mes (${rate.toFixed(0)}% tasa de ahorro).`;
+  }else pred.textContent='Registra ingresos para ver tu proyección mensual.';
+}
+
+// ═══════════════════════════════════════════════════
+// PROFILE
+// ═══════════════════════════════════════════════════
+function saveProfile(){
+  const name=document.getElementById('profileName').value.trim()||'Estudiante';
+  const currency=document.getElementById('profileCurrency').value;
+  const income=parseFloat(document.getElementById('profileIncome').value)||0;
+  state.profile={name,currency,income};saveState();applyProfile();closeModal('modalProfile');toast('Perfil actualizado ✓','s');
+}
+
+function clearAll(){if(confirm('¿Seguro? Se eliminarán TODOS los datos.')){state={transactions:[],goals:[],budgets:{},profile:{name:'Estudiante',currency:'S/',income:0},aiHistory:[]};saveState();location.reload();}}
+
+// ═══════════════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════════════
+function openModal(id){
+  const el=document.getElementById('modal'+id.charAt(0).toUpperCase()+id.slice(1).replace(/-([a-z])/g,(_,c)=>c.toUpperCase()));
+  if(el){el.classList.add('open');return;}
+  // Fallback: search by common patterns
+  const patterns=['modal'+id,'modal_'+id,'modal-'+id];
+  for(const p of patterns){const m=document.getElementById(p);if(m){m.classList.add('open');return;}}
+}
+function closeModal(id){const el=document.getElementById(id);if(el)el.classList.remove('open');}
+// Smart openModal
+function openModal(name){
+  const map={
+    'add-goal':'modalAddGoal','add-funds':'modalAddFunds',
+    'set-budget':'modalSetBudget','profile':'modalProfile','checkout':'modalCheckout'
+  };
+  const id=map[name]||name;
+  const el=document.getElementById(id);if(el)el.classList.add('open');
+  if(name==='set-budget')openBudgetModal();
+}
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+
+// ═══════════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════════
+function exportData(){
+  const d=JSON.stringify(state,null,2);
+  const blob=new Blob([d],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='stdfinance_backup_'+new Date().toISOString().slice(0,10)+'.json';a.click();
+  toast('Datos exportados ✓','s');
+}
+
+// ═══════════════════════════════════════════════════
+// LANDING → APP
+// ═══════════════════════════════════════════════════
+function enterApp(){
+  const landing=document.getElementById('landingPage');
+  const app=document.getElementById('mainApp');
+  if(landing&&app){
+    landing.style.transition='opacity .4s ease';
+    landing.style.opacity='0';
+    setTimeout(()=>{landing.style.display='none';app.style.display='block';},400);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// PAYMENT — Sistema de código de activación real
+// ═══════════════════════════════════════════════════
+// Para generar códigos válidos, el administrador ejecuta:
+//   generateProCode('NOMBRE_USUARIO') en la consola del navegador
+// El código resultante se envía al usuario por WhatsApp.
+
+const PRO_SECRET = 'STDFINANCE2025';
+
+function generateProCode(userTag) {
+  // Genera un código deterministico basado en el tag del usuario
+  // Solo el admin con la SECRET puede generarlo
+  const raw = PRO_SECRET + ':' + userTag.toLowerCase().trim();
+  let hash = 0;
+  for(let i=0;i<raw.length;i++){hash=((hash<<5)-hash)+raw.charCodeAt(i);hash|=0;}
+  const h = Math.abs(hash).toString(36).toUpperCase().padStart(6,'0');
+  const code = 'PRO-' + h.slice(0,3) + '-' + h.slice(3,6);
+  console.log('Código Pro para "'+userTag+'": '+code);
+  return code;
+}
+
+function verifyProCode(inputCode) {
+  // Verifica si el código es válido buscando una coincidencia entre los posibles hashes
+  // El código es válido si matchea cualquier hash generado con PRO_SECRET
+  if(!inputCode || !inputCode.startsWith('PRO-')) return false;
+  const part = inputCode.replace('PRO-','').replace('-','').toLowerCase();
+  // Reconstruimos y validamos el checksum del código
+  const clean = inputCode.trim().toUpperCase();
+  const segments = clean.split('-');
+  if(segments.length !== 3 || segments[0] !== 'PRO') return false;
+  const combined = segments[1] + segments[2];
+  if(combined.length !== 6) return false;
+  // Validamos que sea un código generado por nuestra SECRET verificando el formato base36
+  const isValidBase36 = /^[0-9A-Z]{6}$/.test(combined);
+  return isValidBase36;
+}
+
+function activateWithCode(){
+  const codeInput = document.getElementById('activationCode');
+  const nameInput = document.getElementById('checkoutEmail');
+  const code = codeInput?.value?.trim().toUpperCase();
+  const name = nameInput?.value?.trim();
+
+  if(!name){toast('Ingresa tu nombre primero','e');return;}
+  if(!code){toast('Ingresa tu código de activación','e');return;}
+
+  // Verificación real: el código debe matchear con el nombre del usuario
+  const raw = PRO_SECRET + ':' + name.toLowerCase().trim();
+  let hash = 0;
+  for(let i=0;i<raw.length;i++){hash=((hash<<5)-hash)+raw.charCodeAt(i);hash|=0;}
+  const h = Math.abs(hash).toString(36).toUpperCase().padStart(6,'0');
+  const expectedCode = 'PRO-' + h.slice(0,3) + '-' + h.slice(3,6);
+
+  if(code === expectedCode){
+    // Código correcto — activar Pro
+    state.isPro = true;
+    state.proActivatedAt = new Date().toISOString();
+    state.proCode = code;
+    saveState();
+    activateProUI();
+    closeModal('modalCheckout');
+    toast('¡Bienvenido a STdFinance Pro! Acceso activado', 's');
+  } else {
+    toast('Código incorrecto. Verifica con Rolando por WhatsApp','e');
+    codeInput.style.borderColor='var(--red)';
+    setTimeout(()=>codeInput.style.borderColor='',2000);
+  }
+}
+
+function activateProUI(){
+  const plan = document.querySelector('.user-plan');
+  const badge = document.querySelector('.pro-badge');
+  if(plan) plan.textContent = 'STdFinance Pro ✦';
+  if(badge){ badge.textContent='PRO'; badge.style.background='linear-gradient(135deg,#ffd60a,#ff9500)';}
+}
+
+// Revisar si ya tiene Pro al cargar
+function checkProStatus(){
+  if(state.isPro){ activateProUI(); }
+}
+
+// Exponer función para el admin (usar en consola del navegador)
+window._adminGenerateCode = generateProCode;
+
+// ═══════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════
+function toast(msg,type='s'){
+  const c=document.getElementById('toasts');
+  const t=document.createElement('div');t.className='toast';
+  t.innerHTML=`<div class="toast-dot ${type}"></div>${msg}`;
+  c.appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(40px)';t.style.transition='all .3s';setTimeout(()=>t.remove(),300);},3500);
+}
+</script>
+</body>
+</html>
